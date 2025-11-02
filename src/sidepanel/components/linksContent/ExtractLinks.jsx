@@ -121,18 +121,29 @@ export default function ExtractLinks() {
     setIsFetching(false);
   };
 
-  // 🔹 Stop fetching if tab changes
   useEffect(() => {
-    const listener = (message) => {
-      if (message.action === "tabChanged") {
-        console.log("🔄 Tab changed, stopping fetch...");
-        handleStopFetch();
-      }
+    // 🔹 Function to stop fetching when tab or page changes
+    const handleTabOrPageChange = async () => {
+      console.log("🔄 Tab or page changed, stopping fetch...");
+      await handleStopFetch();
     };
 
-    chrome.runtime.onMessage.addListener(listener);
-    return () => chrome.runtime.onMessage.removeListener(listener);
-  }, [handleStopFetch]);
+    // When user switches to another tab
+    chrome.tabs.onActivated.addListener(handleTabOrPageChange);
+
+    // When current tab reloads or navigates to a different URL
+    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+      if (changeInfo.status === "loading") {
+        handleTabOrPageChange();
+      }
+    });
+
+    // Cleanup to prevent duplicate listeners
+    return () => {
+      chrome.tabs.onActivated.removeListener(handleTabOrPageChange);
+      chrome.tabs.onUpdated.removeListener(handleTabOrPageChange);
+    };
+  }, []);
 
   const handleFindOnPage = (uniqueClass) => {
     if (!requestTabId) return;
