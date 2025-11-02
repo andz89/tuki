@@ -77,15 +77,6 @@ export default function LinksPanel() {
                   Find on the page
                 </button>
 
-                <a
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer"
-                >
-                  Visit link
-                </a>
-
                 <button
                   onClick={() => handleCopy(link.href)}
                   className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer"

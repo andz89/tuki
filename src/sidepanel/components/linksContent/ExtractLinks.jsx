@@ -1,21 +1,31 @@
 import { useEffect, useState } from "react";
-
+import { useExtractLinkStore } from "../../store/useExtractLinkStore";
+import AlertBox from "../helper/notification";
 export default function ExtractLinks() {
-  const [isFetching, setIsFetching] = useState(false);
-  const [links, setLinks] = useState([]);
-  const [error, setError] = useState(null);
-  const [copied, setCopied] = useState(null);
+  const {
+    links,
+    setLinks,
+    resetLinks,
+    setError,
+    requestTabId,
+    setRequestTabId,
+  } = useExtractLinkStore();
 
-  // 🔹 Listen for LINKS_FOUND messages from the content script
+  const [isFetching, setIsFetching] = useState(false);
+  const [copied, setCopied] = useState(null);
+  const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
+  const tabMismatch =
+    requestTabId && currentTabId && requestTabId !== currentTabId;
+  // 🔹 Listen for LINKS_FOUND from content script
   useEffect(() => {
     const handleMessage = (message) => {
       if (message.type === "LINKS_FOUND") {
         if (!message.links || message.links.length === 0) {
-          setLinks([]);
+          resetLinks();
           return;
         }
 
-        // Normalize and remove duplicates
+        // Normalize + deduplicate
         const normalize = (url) => url.toLowerCase().replace(/\/$/, "");
         const seen = new Set();
         const uniqueLinks = [];
@@ -34,9 +44,30 @@ export default function ExtractLinks() {
 
     chrome.runtime.onMessage.addListener(handleMessage);
     return () => chrome.runtime.onMessage.removeListener(handleMessage);
-  }, []);
+  }, [setLinks, resetLinks]);
+  // ************************* get current tab id on load & tab switch *****************************//
+  const updateCurrentTab = async () => {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    if (tab?.id) setCurrentTabId(tab.id);
+  };
 
-  // 🔹 Handle fetching links
+  useEffect(() => {
+    updateCurrentTab();
+
+    const handleTabChange = (message) => {
+      if (message.action === "tabChanged") {
+        console.log("🔄 Tab changed, fetching new tab ID...");
+        updateCurrentTab();
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(handleTabChange);
+    return () => chrome.runtime.onMessage.removeListener(handleTabChange);
+  }, []);
+  // 🔹 Handle fetch links
   const handleFetchLinks = async () => {
     setIsFetching(true);
     setError(null);
@@ -53,6 +84,8 @@ export default function ExtractLinks() {
         return;
       }
 
+      setRequestTabId(tab.id); // ✅ store tab ID
+
       chrome.tabs.sendMessage(
         tab.id,
         { type: "selectElementAndExtractLinks" },
@@ -64,10 +97,7 @@ export default function ExtractLinks() {
             );
             setError("Failed to communicate with the content script.");
           } else {
-            console.log(
-              "selectElementAndExtractLinks executed:",
-              response?.data
-            );
+            console.log("Extraction executed:", response?.data);
           }
         }
       );
@@ -76,16 +106,11 @@ export default function ExtractLinks() {
     }
   };
 
-  // 🔹 Stop hovering action
+  // 🔹 Stop hover action
   const stopHoveringLink = async () => {
     try {
-      const [tab] = await chrome.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      if (!tab?.id) return;
-
-      chrome.tabs.sendMessage(tab.id, { type: "stopHoveringLink" });
+      if (!requestTabId) return;
+      chrome.tabs.sendMessage(requestTabId, { type: "stopHoveringLink" });
     } catch (error) {
       console.error("Error in stopHoveringLink:", error);
     }
@@ -96,12 +121,24 @@ export default function ExtractLinks() {
     setIsFetching(false);
   };
 
+  // 🔹 Stop fetching if tab changes
+  useEffect(() => {
+    const listener = (message) => {
+      if (message.action === "tabChanged") {
+        console.log("🔄 Tab changed, stopping fetch...");
+        handleStopFetch();
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(listener);
+    return () => chrome.runtime.onMessage.removeListener(listener);
+  }, [handleStopFetch]);
+
   const handleFindOnPage = (uniqueClass) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        type: "window-displayLink",
-        targetHref: uniqueClass, // match content.js
-      });
+    if (!requestTabId) return;
+    chrome.tabs.sendMessage(requestTabId, {
+      type: "window-displayLink",
+      targetHref: uniqueClass,
     });
   };
 
@@ -117,12 +154,11 @@ export default function ExtractLinks() {
 
   return (
     <div className="p-3">
-      {/* Header and Buttons */}
-      <div className="flex gap-2 mb-4 flex flex-col mx-2">
-        {/* Title */}
+      <div className="flex gap-2 mb-4 flex-col mx-2">
         <h3 className="font-semibold text-gray-800 mb-1 text-lg ">
           Extracted links will show below.
         </h3>
+
         {!isFetching ? (
           <button
             onClick={handleFetchLinks}
@@ -139,9 +175,18 @@ export default function ExtractLinks() {
           </button>
         )}
       </div>
-
-      {/* No links */}
-      {links.length === 0 && !error ? (
+      {tabMismatch && (
+        <AlertBox
+          message={
+            <>
+              <span className="font-medium">Warning alert!</span> ⚠️ Looks like
+              you switched tabs! The links below are from your previous tab.
+            </>
+          }
+          type="warning"
+        />
+      )}
+      {links.length === 0 ? (
         <p className="text-sm text-gray-500">
           {isFetching ? "Hover your mouse on the page." : ""}
         </p>
@@ -152,19 +197,15 @@ export default function ExtractLinks() {
               <div className="flex justify-left items-center mb-2 gap-2 flex-wrap">
                 <button
                   onClick={() => handleFindOnPage(link.uniqueClass)}
-                  className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer"
+                  disabled={tabMismatch} // disable if tab changed
+                  className={`rounded border border-yellow-700 text-xs font-semibold py-1 px-2 ${
+                    tabMismatch
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-slate-700 hover:bg-slate-200 cursor-pointer"
+                  }`}
                 >
                   Find on the page
                 </button>
-
-                <a
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer"
-                >
-                  Visit link
-                </a>
 
                 <button
                   onClick={() => handleCopy(link.href)}

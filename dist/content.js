@@ -235,7 +235,7 @@ function displayLink(targetHref, retries = 5, delay = 300) {
           background: rgb(252, 198, 0);
           color: black;
           padding: 4px 8px;
-          border-radius: 20px 0px 20px 20px;
+         
           font-size: 12px;
           z-index: 99999;
           white-space: nowrap;
