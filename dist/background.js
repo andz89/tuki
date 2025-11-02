@@ -1,0 +1,64 @@
+chrome.action.onClicked.addListener(async (tab) => {
+  // When the extension icon is clicked, open the side panel
+  await chrome.sidePanel.open({ tabId: tab.id });
+});
+// background.js
+// chrome.tabs.onActivated.addListener((activeInfo) => {
+//   chrome.runtime.sendMessage({ action: "tabChanged", tabId: activeInfo.tabId });
+// });
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+  const tabId = activeInfo.tabId;
+
+  try {
+    // Step 1: Try to ping the content script
+    chrome.tabs.sendMessage(tabId, { type: "ping" }, async (response) => {
+      if (chrome.runtime.lastError || !response) {
+        // ❌ No response → content.js not loaded → inject it
+        console.log("Injecting content.js into new tab...");
+
+        try {
+          await chrome.scripting.executeScript({
+            target: { tabId },
+            files: ["content.js"],
+          });
+        } catch (e) {
+          console.warn("Cannot inject into tab:", e.message);
+          return;
+        }
+      } else {
+        console.log("✅ content.js already active on this tab.");
+      }
+
+      // Step 2: notify popup (or others) about tab change
+      chrome.runtime.sendMessage({ action: "tabChanged" });
+    });
+  } catch (e) {
+    console.warn("Tab activation error:", e.message);
+  }
+});
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  if (changeInfo.status === "complete") {
+    try {
+      chrome.tabs.sendMessage(tabId, { type: "ping" }, async (response) => {
+        if (chrome.runtime.lastError || !response) {
+          console.log("Injecting content.js into reloaded tab...");
+          try {
+            await chrome.scripting.executeScript({
+              target: { tabId },
+              files: ["content.js"],
+            });
+          } catch (e) {
+            console.warn("Cannot inject into tab:", e.message);
+            return;
+          }
+        } else {
+          console.log("✅ content.js already active on this tab.");
+        }
+
+        chrome.runtime.sendMessage({ action: "tabChanged" });
+      });
+    } catch (e) {
+      console.warn("Tab update error:", e.message);
+    }
+  }
+});

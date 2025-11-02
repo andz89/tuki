@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Tuki to version 1.0",
+  "version": "1.0",
+  "description": "A Chrome extension using Vite + React with a side panel",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/sidepanel.html"
+  },
+  "permissions": ["sidePanel", "activeTab", "scripting", "tabs"],
+  "action": {
+    "default_title": "Open Side Panel"
+  },
+  "host_permissions": ["<all_urls>"]
+}
