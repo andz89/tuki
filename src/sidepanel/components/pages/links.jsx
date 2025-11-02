@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLinkStore } from "../../store/useLinkStore";
+import AlertBox from "../helper/notification";
 export default function LinksPanel() {
   // const [links, setLinks] = useState([]);
 
@@ -95,10 +96,11 @@ export default function LinksPanel() {
 
               <div>
                 {linkStatuses[link.uniqueClass] === "hidden" && (
-                  <span className="bg-yellow-400 text-xs text-black block p-1">
-                    This link is hidden on the page and cannot be displayed. ID:{" "}
-                    {link.uniqueClass}
-                  </span>
+                  <AlertBox
+                    message={` This link is hidden on the page and cannot be displayed. Link ID: 
+                    ${link.uniqueClass}`}
+                    type="warning"
+                  />
                 )}
 
                 <a

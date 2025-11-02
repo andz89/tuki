@@ -7,9 +7,9 @@ import Header from "./components/header.jsx";
 import PageInfo from "./components/pages/pageInfo.jsx";
 import Links from "./components/pages/links.jsx";
 
-import TargetLinks from "./components/linksContent/TargetLinks.jsx";
 import BrokenLinks from "./components/linksContent/BrokenLinks.jsx";
 import LinksHeader from "./components/LinkHeader.jsx";
+import ExtractLinks from "./components/linksContent/ExtractLinks.jsx";
 
 function InnerApp() {
   const [isInjected, setIsInjected] = useState(false);
@@ -63,7 +63,7 @@ function InnerApp() {
         <Route path="/" element={<PageInfo />} />
         <Route path="/links" element={<Links />} />
         <Route path="/broken-links" element={<BrokenLinks />} />
-        <Route path="/target-section" element={<TargetLinks />} />
+        <Route path="/target-section" element={<ExtractLinks />} />
       </Routes>
     </div>
   );
