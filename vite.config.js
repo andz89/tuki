@@ -12,6 +12,7 @@ export default defineConfig({
         { src: "src/manifest.json", dest: "dist" },
         { src: "src/background/background.js", dest: "dist" },
         { src: "src/content/content.js", dest: "dist" }, // 👈 add this
+        { src: "src/icons/*", dest: "dist/icons" }, // ✅ add this line
       ],
       hook: "writeBundle",
     }),

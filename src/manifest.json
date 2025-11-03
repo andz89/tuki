@@ -14,5 +14,11 @@
   "action": {
     "default_title": "Open Side Panel"
   },
+  "icons": {
+    "16": "icons/tuki.png",
+    "48": "icons/tuki.png",
+    "128": "icons/tuki.png"
+  },
+
   "host_permissions": ["<all_urls>"]
 }
