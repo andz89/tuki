@@ -11,6 +11,9 @@ import BrokenLinks from "./components/linksContent/BrokenLinks.jsx";
 import LinksHeader from "./components/LinkHeader.jsx";
 import ExtractLinks from "./components/linksContent/ExtractLinks.jsx";
 import PageChangeWatcher from "./components/helper/PageChangeWatcher.jsx";
+import GlobalTextHighlighter from "./components/helper/GlobalTextHighlighter.jsx";
+import InputSearch from "./components/helper/inputSearch.jsx";
+
 function InnerApp() {
   const [isInjected, setIsInjected] = useState(false);
   const handlePageChange = (path) => {
@@ -63,8 +66,11 @@ function InnerApp() {
   return (
     <div className="p-1">
       <Header />
+
       {showLinksHeader && <LinksHeader />}
       <PageChangeWatcher onPageChange={handlePageChange} />
+      <InputSearch />
+      <GlobalTextHighlighter />
       <Routes>
         <Route path="/" element={<PageInfo />} />
         <Route path="/links" element={<Links />} />
