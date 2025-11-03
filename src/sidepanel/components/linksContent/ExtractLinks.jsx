@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useExtractLinkStore } from "../../store/useExtractLinkStore";
 import AlertBox from "../helper/notification";
-import { useLocation } from "react-router-dom";
 export default function ExtractLinks() {
   const {
     links,
@@ -17,14 +16,6 @@ export default function ExtractLinks() {
   const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
   const tabMismatch =
     requestTabId && currentTabId && requestTabId !== currentTabId;
-  const location = useLocation();
-  useEffect(() => {
-    // 🔹 Stop fetch when navigating inside your extension (React Router)
-    console.log("🧭 Extension route changed, stopping fetch...");
-    handleStopFetch();
-  }, [location.pathname]); // runs whenever the internal route changes
-
-  console.log(location.pathname);
 
   // 🔹 Listen for LINKS_FOUND from content script
   useEffect(() => {
@@ -79,6 +70,7 @@ export default function ExtractLinks() {
   }, []);
   // 🔹 Handle fetch links
   const handleFetchLinks = async () => {
+    resetLinks();
     setIsFetching(true);
     setError(null);
 
@@ -131,28 +123,17 @@ export default function ExtractLinks() {
     setIsFetching(false);
   };
 
+  // 🔹 Stop fetching if tab changes
   useEffect(() => {
-    // 🔹 Function to stop fetching when tab or page changes
-    const handleTabOrPageChange = async () => {
-      console.log("🔄 Tab or page changed, stopping fetch...");
-      await handleStopFetch();
-    };
-
-    // When user switches to another tab
-    chrome.tabs.onActivated.addListener(handleTabOrPageChange);
-
-    // When current tab reloads or navigates to a different URL
-    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-      if (changeInfo.status === "loading") {
-        handleTabOrPageChange();
+    const listener = (message) => {
+      if (message.action === "tabChanged") {
+        console.log("🔄 Tab changed, stopping fetch...");
+        handleStopFetch();
       }
-    });
-
-    // Cleanup to prevent duplicate listeners
-    return () => {
-      chrome.tabs.onActivated.removeListener(handleTabOrPageChange);
-      chrome.tabs.onUpdated.removeListener(handleTabOrPageChange);
     };
+
+    chrome.runtime.onMessage.addListener(listener);
+    return () => chrome.runtime.onMessage.removeListener(listener);
   }, []);
 
   const handleFindOnPage = (uniqueClass) => {

@@ -10,10 +10,16 @@ import Links from "./components/pages/links.jsx";
 import BrokenLinks from "./components/linksContent/BrokenLinks.jsx";
 import LinksHeader from "./components/LinkHeader.jsx";
 import ExtractLinks from "./components/linksContent/ExtractLinks.jsx";
-
+import PageChangeWatcher from "./components/helper/PageChangeWatcher.jsx";
 function InnerApp() {
   const [isInjected, setIsInjected] = useState(false);
-
+  const handlePageChange = (path) => {
+    console.log("⚠️ User switched to another page:", path);
+    // Stop fetching, reset state, or show warning here
+    // Example:
+    // stopHoveringLink();
+    // setIsFetching(false);
+  };
   async function loadFunctions() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tabId = tabs[0].id;
@@ -58,7 +64,7 @@ function InnerApp() {
     <div className="p-1">
       <Header />
       {showLinksHeader && <LinksHeader />}
-
+      <PageChangeWatcher onPageChange={handlePageChange} />
       <Routes>
         <Route path="/" element={<PageInfo />} />
         <Route path="/links" element={<Links />} />

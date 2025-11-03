@@ -397,6 +397,7 @@ function removeCreatedCustomSyleAndElement() {
   document.querySelectorAll(".zigzag-highlight").forEach((el) => {
     el.classList.remove("zigzag-highlight");
   });
-  var custom_pupop = document.getElementById("custom-pupop");
+  document.querySelectorAll(".zigzag-popup").forEach((el) => el.remove());
+  // var custom_pupop = document.getElementById("custom-pupop");
   if (custom_pupop) custom_pupop.remove();
 }
