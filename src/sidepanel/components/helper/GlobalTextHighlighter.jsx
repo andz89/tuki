@@ -4,15 +4,15 @@ import Mark from "mark.js";
 export default function useMarkText() {
   useEffect(() => {
     const input = document.querySelector("#highlight-input");
-    const markInstance = new Mark(document.body);
-
     if (!input) return;
 
+    const markInstance = new Mark(document.body);
+
     const handleInput = () => {
-      const keyword = input.value;
+      const keyword = input.value.trim();
       markInstance.unmark({
         done: () => {
-          if (keyword.trim()) {
+          if (keyword) {
             markInstance.mark(keyword);
           }
         },
@@ -21,8 +21,11 @@ export default function useMarkText() {
 
     input.addEventListener("input", handleInput);
 
+    // cleanup listener
     return () => {
       input.removeEventListener("input", handleInput);
     };
   }, []);
+
+  return null; // nothing visible, just runs globally
 }
