@@ -9,7 +9,7 @@ const header = () => {
     "/target-section",
   ].includes(location.pathname);
   return (
-    <div>
+    <div className="sticky top-0 z-50 bg-white">
       <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
         <li className="">
           <NavLink

@@ -20,6 +20,9 @@ export default function useMarkText() {
     };
 
     input.addEventListener("input", handleInput);
+    input.addEventListener("click", handleInput);
+
+    handleInput(); // run once on load
 
     // cleanup listener
     return () => {

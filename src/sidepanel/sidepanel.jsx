@@ -64,7 +64,7 @@ function InnerApp() {
     "/target-section",
   ].includes(location.pathname);
   return (
-    <div className="p-1">
+    <div className="bg-white">
       <Header />
 
       {showLinksHeader && <LinksHeader />}

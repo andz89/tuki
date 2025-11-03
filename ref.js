@@ -1,61 +1,34 @@
-// src/sidepanel/main.jsx
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom/client";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import Mark from "mark.js";
 
-import Header from "./components/header.jsx";
-import PageInfo from "./components/pages/pageInfo.jsx";
-import Links from "./components/pages/links.jsx";
-
-function App() {
-  const [isInjected, setIsInjected] = useState(false);
-
+export default function useMarkText() {
   useEffect(() => {
-    async function loadFunctions() {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const tabId = tabs[0].id;
+    const input = document.querySelector("#highlight-input");
+    if (!input) return;
 
-        chrome.scripting.executeScript(
-          {
-            target: { tabId },
-            files: ["content.js"],
-          },
-          () => {
-            if (chrome.runtime.lastError) {
-              console.warn(
-                "Injection warning:",
-                chrome.runtime.lastError.message
-              );
-            } else {
-              console.log("✅ content.js injected");
-            }
-            // Either way, mark it as injected to proceed
-            setIsInjected(true);
+    const markInstance = new Mark(document.body);
+
+    const handleInput = () => {
+      const keyword = input.value.trim();
+      markInstance.unmark({
+        done: () => {
+          if (keyword) {
+            markInstance.mark(keyword);
           }
-        );
+        },
       });
-    }
+    };
 
-    loadFunctions();
+    input.addEventListener("input", handleInput);
+    input.addEventListener("click", handleInput);
+
+    handleInput(); // run once on load
+
+    // cleanup listener
+    return () => {
+      input.removeEventListener("input", handleInput);
+    };
   }, []);
 
-  if (!isInjected) {
-    return (
-      <div className="p-4 text-gray-600 text-sm">Loading... Please wait.</div>
-    );
-  }
-
-  return (
-    <div className="p-2">
-      <HashRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<PageInfo />} />
-          <Route path="/links" element={<Links />} />
-        </Routes>
-      </HashRouter>
-    </div>
-  );
+  return null; // nothing visible, just runs globally
 }
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
