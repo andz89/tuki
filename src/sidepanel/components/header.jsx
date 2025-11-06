@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import InputSearch from "./helper/inputSearch.jsx";
 const header = () => {
   const location = useLocation();
   const isLinksActive = [
@@ -9,7 +10,7 @@ const header = () => {
     "/target-section",
   ].includes(location.pathname);
   return (
-    <div className="sticky top-0 z-50 bg-white">
+    <div className="bg-white">
       <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
         <li className="">
           <NavLink

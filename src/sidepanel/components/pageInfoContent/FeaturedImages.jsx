@@ -50,7 +50,7 @@ export default function FeaturedImages() {
   }, []);
 
   return (
-    <div className="p-2">
+    <div>
       {error && (
         <p className="text-sm text-black bg-yellow-500 p-2 mb-2">{error}</p>
       )}

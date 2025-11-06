@@ -1,34 +1,24 @@
 import { useEffect } from "react";
-import Mark from "mark.js";
+import { useLocation } from "react-router-dom";
 
-export default function useMarkText() {
+export default function PageChangeWatcher({ onPageChange }) {
+  const location = useLocation();
+
   useEffect(() => {
-    const input = document.querySelector("#highlight-input");
-    if (!input) return;
+    console.log("🧭 User navigated to:", location.pathname);
 
-    const markInstance = new Mark(document.body);
+    // Run your custom action
+    if (typeof onPageChange === "function") {
+      // onPageChange(location.pathname);
+      stopHoveringLink();
+    }
+  }, [location.pathname, onPageChange]);
 
-    const handleInput = () => {
-      const keyword = input.value.trim();
-      markInstance.unmark({
-        done: () => {
-          if (keyword) {
-            markInstance.mark(keyword);
-          }
-        },
-      });
-    };
-
-    input.addEventListener("input", handleInput);
-    input.addEventListener("click", handleInput);
-
-    handleInput(); // run once on load
-
-    // cleanup listener
-    return () => {
-      input.removeEventListener("input", handleInput);
-    };
-  }, []);
-
-  return null; // nothing visible, just runs globally
+  return null; // this component doesn’t render anything
 }
+// 🔹 Stop hover action
+const stopHoveringLink = async () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, { type: "stopHoveringLink" });
+  });
+};

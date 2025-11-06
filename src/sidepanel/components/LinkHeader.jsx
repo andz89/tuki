@@ -1,7 +1,8 @@
 import { useLocation, NavLink } from "react-router-dom";
+import InputSearch from "./helper/inputSearch.jsx";
 const LinkHeader = () => {
   return (
-    <div className=" sticky top-9 z-50 bg-white text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 ">
+    <div className="bg-white text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 ">
       <ul className="flex flex-wrap -mb-px  ">
         <li className="">
           <NavLink

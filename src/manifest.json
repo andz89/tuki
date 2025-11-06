@@ -20,5 +20,5 @@
     "128": "icons/tuki.png"
   },
 
-  "host_permissions": ["<all_urls>"]
+  "host_permissions": ["http://*/*", "https://*/*", "<all_urls>"]
 }

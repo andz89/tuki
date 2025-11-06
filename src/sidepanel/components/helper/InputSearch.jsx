@@ -4,7 +4,7 @@ export default function InputSearch() {
   useMarkText(); // automatically applies highlighting
 
   return (
-    <div className="p-1">
+    <div className="p-1 sticky top-20 z-50 bg-white">
       <input
         id="highlight-input"
         placeholder="Type to highlight text..."

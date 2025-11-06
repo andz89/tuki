@@ -101,7 +101,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "extract-links") {
     const uniquePrefix = "unique-link-ID";
     let counter = 0;
-
     const linksWithClasses = Array.from(document.querySelectorAll("a"))
       .filter(
         (a) =>
@@ -279,6 +278,7 @@ function selectElementAndExtractLinks() {
   document.addEventListener("click", clickListener, true);
 }
 function clickListener(e) {
+  let counter = 0;
   e.preventDefault();
   e.stopPropagation();
 

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useExtractLinkStore } from "../../store/useExtractLinkStore";
+import { useLinkStore } from "../../store/useLinkStore";
+
 import AlertBox from "../helper/notification";
 export default function ExtractLinks() {
   const {
@@ -10,6 +12,7 @@ export default function ExtractLinks() {
     requestTabId,
     setRequestTabId,
   } = useExtractLinkStore();
+  const { fetchLinks } = useLinkStore();
 
   const [isFetching, setIsFetching] = useState(false);
   const [copied, setCopied] = useState(null);
@@ -21,10 +24,10 @@ export default function ExtractLinks() {
   useEffect(() => {
     const handleMessage = (message) => {
       if (message.type === "LINKS_FOUND") {
-        if (!message.links || message.links.length === 0) {
-          resetLinks();
-          return;
-        }
+        // if (!message.links || message.links.length === 0) {
+        //   resetLinks();
+        //   return;
+        // }
 
         // Normalize + deduplicate
         const normalize = (url) => url.toLowerCase().replace(/\/$/, "");
@@ -42,10 +45,25 @@ export default function ExtractLinks() {
         setLinks(uniqueLinks);
       }
     };
+    // updateCurrentTab();
+
+    // const handleTabChange = async (message) => {
+    //   if (message.action === "tabChanged") {
+    //     console.log("🔄 Tab changed, fetching new tab ID...");
+    //     await updateCurrentTab();
+    //   }
+    // };
+
+    // chrome.runtime.onMessage.addListener(handleTabChange);
 
     chrome.runtime.onMessage.addListener(handleMessage);
-    return () => chrome.runtime.onMessage.removeListener(handleMessage);
-  }, [setLinks, resetLinks]);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleMessage);
+      // chrome.runtime.onMessage.removeListener(handleTabChange);
+    };
+  }, []);
+
   // ************************* get current tab id on load & tab switch *****************************//
   const updateCurrentTab = async () => {
     const [tab] = await chrome.tabs.query({
@@ -133,6 +151,7 @@ export default function ExtractLinks() {
     };
 
     chrome.runtime.onMessage.addListener(listener);
+
     return () => chrome.runtime.onMessage.removeListener(listener);
   }, []);
 

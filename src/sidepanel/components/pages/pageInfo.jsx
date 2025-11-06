@@ -6,7 +6,7 @@ import CustomTags from "../pageInfoContent/customTag.jsx";
 import ModuleCategory from "../pageInfoContent/ModuleCategory.jsx";
 export default function PageInfo() {
   return (
-    <div className=" flex flex-col gap-2 mt-1">
+    <div className=" flex flex-col gap-2 mt-1 px-2">
       <FeaturedImages />
 
       <PageDetails />

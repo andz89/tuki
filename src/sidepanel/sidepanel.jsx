@@ -65,11 +65,13 @@ function InnerApp() {
   ].includes(location.pathname);
   return (
     <div className="bg-white">
-      <Header />
+      <div className="sticky top-0 z-50 ">
+        <Header />
+        {showLinksHeader && <LinksHeader />}
+        <InputSearch />
+      </div>
 
-      {showLinksHeader && <LinksHeader />}
       <PageChangeWatcher onPageChange={handlePageChange} />
-      <InputSearch />
       <GlobalTextHighlighter />
       <Routes>
         <Route path="/" element={<PageInfo />} />
