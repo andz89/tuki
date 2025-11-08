@@ -11,6 +11,8 @@ export default function BrokenLinksPanel() {
     tabId,
     fetchLinks,
     setRequestTabId,
+    requestTabId,
+    setAllLinks,
   } = useLinkStore();
 
   const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
@@ -29,6 +31,7 @@ export default function BrokenLinksPanel() {
   };
 
   const getLinks = async () => {
+    tabMismatch ? setAllLinks([]) : null; // clear links on requestTabId change
     updateCurrentTab();
     const links = await fetchLinks(); // fetch actual data
     processBrokenLinks(links);
@@ -61,9 +64,9 @@ export default function BrokenLinksPanel() {
   useEffect(() => {
     updateCurrentTab();
 
-    if (allLinks.length > 0 && brokenLinks.length === 0) {
-      processBrokenLinks(allLinks);
-    }
+    // if (allLinks.length > 0 && brokenLinks.length === 0) {
+    //   processBrokenLinks(allLinks);
+    // }
 
     // Listener for messages from content.js to get link status
     const handleMessageLinkStatus = (message, sender, sendResponse) => {
@@ -107,17 +110,14 @@ export default function BrokenLinksPanel() {
 
   return (
     <div className="p-3">
-      <div className="flex items-center justify-between mb-2">
-        <h2 className="font-semibold text-gray-800 text-lg no-highlight">
-          Broken Links
-        </h2>
+      <div className="flex gap-2 mb-4 flex-col mx-2">
         <span
-          className="text-sm  bg-yellow-500 font-medium rounded-sm p-2 text-black cursor-pointer no-highlight"
+          className="text-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium no-highlight cursor-pointer"
           onClick={async () => {
             await getLinks();
           }}
         >
-          Refresh
+          Extract & Check Links
         </span>
       </div>
 
@@ -125,7 +125,7 @@ export default function BrokenLinksPanel() {
         <p className="text-sm text-gray-500 mb-2">Checking links...</p>
       )}
 
-      {!loading && brokenLinks.length === 0 && (
+      {!loading && brokenLinks.length === 0 && requestTabId !== null && (
         <p className="text-sm text-gray-500 mb-2">No broken links found.</p>
       )}
       {tabMismatch && (

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useExtractLinkStore } from "../../store/useExtractLinkStore";
-import { useLinkStore } from "../../store/useLinkStore";
+import { useHoverLinkStore } from "../../store/useHoverLinkStore";
 
 import AlertBox from "../helper/notification";
 export default function ExtractLinks() {
@@ -11,8 +10,7 @@ export default function ExtractLinks() {
     setError,
     requestTabId,
     setRequestTabId,
-  } = useExtractLinkStore();
-  const { fetchLinks } = useLinkStore();
+  } = useHoverLinkStore();
 
   const [isFetching, setIsFetching] = useState(false);
   const [copied, setCopied] = useState(null);
@@ -163,23 +161,19 @@ export default function ExtractLinks() {
   return (
     <div className="p-3">
       <div className="flex gap-2 mb-4 flex-col mx-2">
-        <h3 className="font-semibold text-gray-800 mb-1 text-lg no-highlight">
-          Extracted links will show below.
-        </h3>
-
         {!isFetching ? (
           <button
             onClick={handleFetchLinks}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium no-highlight"
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium no-highlight cursor-pointer"
           >
-            Start Fetch Links
+            Start Hover Mode
           </button>
         ) : (
           <button
             onClick={handleStopFetch}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium no-highlight"
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium no-highlight cursor-pointer"
           >
-            Stop Fetch
+            Stop Hover Mode
           </button>
         )}
       </div>

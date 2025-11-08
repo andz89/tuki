@@ -100,15 +100,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.type === "extract-links") {
     const uniquePrefix = "unique-link-ID";
+
+    // ✅ Remove all previously assigned unique-link-ID-* classes
+    document.querySelectorAll(`a[class*="${uniquePrefix}-"]`).forEach((a) => {
+      a.classList.forEach((cls) => {
+        if (cls.startsWith(uniquePrefix)) a.classList.remove(cls);
+      });
+    });
+
+    // ✅ Assign new unique IDs
     let counter = 0;
     const linksWithClasses = Array.from(document.querySelectorAll("a"))
       .filter(
         (a) =>
-          // (a.href.startsWith("http") ||
-          //   a.href.startsWith("mailto:") ||
-          //   a.href.startsWith("whatsapp://") ||
-          //   a.href.startsWith("tg://") ||
-          //   a.href.startsWith("sms:")) &&
           !a.href.endsWith("/#") &&
           !a.href.includes("chrome-extension") &&
           !a.href.includes("wp-admin") &&
@@ -119,17 +123,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           !a.href.includes("admin")
       )
       .map((a) => {
-        const existing = [...a.classList].find((cls) =>
-          cls.startsWith(uniquePrefix)
-        );
-        const uniqueClass = existing || `${uniquePrefix}-${counter++}`;
-        if (!existing) a.classList.add(uniqueClass);
-
+        const uniqueClass = `${uniquePrefix}-${counter++}`;
+        a.classList.add(uniqueClass);
         return { href: a.href, uniqueClass };
       });
 
     sendResponse({ data: linksWithClasses });
   }
+
   if (message.type === "window-displayLink") {
     const targetHref = message.targetHref; // Get the href/link value
     console.log("Looking for link:", targetHref);

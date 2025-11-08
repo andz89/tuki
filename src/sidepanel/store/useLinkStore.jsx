@@ -6,12 +6,14 @@ export const useLinkStore = create((set, get) => ({
   error: "",
   tabId: null, // ✅ initialize with null
   requestTabId: null,
+
   // setters
   setAllLinks: (links) => set({ allLinks: links }),
   addBrokenLink: (link) => set({ brokenLinks: [...get().brokenLinks, link] }),
   resetBrokenLinks: () => set({ brokenLinks: [] }),
   isBroken: (href) => get().brokenLinks.some((l) => l.href === href),
   setError: (msg) => set({ error: msg }),
+
   setTabId: (id) => set({ tabId: id }), // ✅ handy setter for tabId
   setRequestTabId: (id) => set({ requestTabId: id }),
   // main fetch function
@@ -55,6 +57,7 @@ export const useLinkStore = create((set, get) => ({
                 `✅ Links fetched from tab ${activeTabId}:`,
                 response.data
               );
+
               resolve(response.data);
             } else {
               resolve([]);

@@ -5,11 +5,11 @@ import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import Header from "./components/headers/header.jsx";
 import PageInfo from "./components/pages/pageInfo.jsx";
-import Links from "./components/pages/links.jsx";
+import AllLinksExtractLinks from "./components/pages/AllLinks-ExtractLinks.jsx";
 
-import BrokenLinks from "./components/linksContent/BrokenLinks.jsx";
+import BrokenLinks from "./components/pages/BrokenLinks.jsx";
 import LinksHeader from "./components/headers/LinkHeader.jsx";
-import ExtractLinks from "./components/linksContent/ExtractLinks.jsx";
+import HoverLinks from "./components/pages/HoverLinks.jsx";
 import PageChangeWatcher from "./components/helper/PageChangeWatcher.jsx";
 import GlobalTextHighlighter from "./components/helper/GlobalTextHighlighter.jsx";
 import InputSearch from "./components/helper/inputSearch.jsx";
@@ -76,9 +76,9 @@ function InnerApp() {
       <div id="pages">
         <Routes>
           <Route path="/" element={<PageInfo />} />
-          <Route path="/links" element={<Links />} />
+          <Route path="/links" element={<AllLinksExtractLinks />} />
           <Route path="/broken-links" element={<BrokenLinks />} />
-          <Route path="/target-section" element={<ExtractLinks />} />
+          <Route path="/target-section" element={<HoverLinks />} />
         </Routes>
       </div>
     </div>

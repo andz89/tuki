@@ -1,7 +1,7 @@
 // useExtractLinkStore.jsx
 import { create } from "zustand";
 
-export const useExtractLinkStore = create((set) => ({
+export const useHoverLinkStore = create((set) => ({
   links: [],
   requestTabId: null,
   error: null,

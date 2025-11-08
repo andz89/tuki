@@ -1,26 +1,52 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useLinkStore } from "../../store/useLinkStore";
 import AlertBox from "../helper/notification";
 export default function LinksPanel() {
   // const [links, setLinks] = useState([]);
 
-  const [linkStatuses, setLinkStatuses] = useState({}); // store status per uniqueClass
   // 🔹 Fetch all links from the current active tab
 
-  const { allLinks, setAllLinks, fetchLinks, loading, error } = useLinkStore();
+  const {
+    allLinks,
+    setAllLinks,
+
+    error,
+    tabId,
+    fetchLinks,
+    setRequestTabId,
+    requestTabId,
+  } = useLinkStore();
+  // ************************* get current tab id on load & tab switch *****************************//
+  const [loading, setLoading] = useState(false);
+  const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
+  const [linkStatuses, setLinkStatuses] = useState({}); // store status per uniqueClass
+  const tabMismatch = tabId && currentTabId && tabId !== currentTabId;
+  const updateCurrentTab = async () => {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    if (tab?.id) setCurrentTabId(tab.id);
+  };
+  const getLinks = async () => {
+    setLoading(true);
+    try {
+      const links = await fetchLinks(); // returns actual data
+      setAllLinks(links);
+      setRequestTabId(tabId);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const getLinks = async () => {
-      const links = await fetchLinks(); // fetch actual data
-      setAllLinks(links); // now set the real data
-    };
-
-    getLinks();
-
+    updateCurrentTab();
     // Re-fetch when tab changes
     const listener = (message) => {
       if (message.action === "tabChanged") {
-        console.log("🔄 Tab changed, fetching links again...");
-        getLinks(); // re-fetch and update store
+        updateCurrentTab();
+        setLoading(false); // reset loading
       }
     };
 
@@ -38,7 +64,6 @@ export default function LinksPanel() {
     chrome.runtime.onMessage.addListener(handleMessage);
 
     return () => {
-      chrome.runtime.onMessage.removeListener(listener);
       chrome.runtime.onMessage.removeListener(handleMessage);
     };
   }, []);
@@ -59,11 +84,29 @@ export default function LinksPanel() {
 
   return (
     <div className="p-3">
-      <h2 className="font-semibold text-gray-800 mb-3 text-lg no-highlight">
-        Extracted Links
-      </h2>
+      <div className="flex gap-2 mb-4 flex-col mx-2">
+        <span
+          className="text-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium no-highlight cursor-pointer"
+          onClick={async () => {
+            await getLinks();
+          }}
+        >
+          Extract Links
+        </span>
+      </div>
+      {tabMismatch && (
+        <AlertBox
+          message={
+            <>
+              <span className="font-medium">Warning alert!</span> ⚠️ Looks like
+              you switched tabs! The links below are from your previous tab.
+            </>
+          }
+          type="warning"
+        />
+      )}
       {error && <p className="text-sm text-red-600 mb-2">{error}</p>}
-      {allLinks.length === 0 && !error ? (
+      {loading === true ? (
         <p className="text-sm text-gray-500 no-highlight">Loading links...</p>
       ) : (
         <ol className="list-decimal ml-4 space-y-3">
@@ -73,7 +116,12 @@ export default function LinksPanel() {
                 <button
                   onClick={() => handleFindOnPage(link.uniqueClass)}
                   data-link={link.uniqueClass}
-                  className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer no-highlight"
+                  disabled={tabMismatch} // disable if tab changed
+                  className={`rounded border border-yellow-700 text-xs font-semibold py-1 px-2 ${
+                    tabMismatch
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-slate-700 hover:bg-slate-200 cursor-pointer"
+                  }`}
                 >
                   Find on the page
                 </button>

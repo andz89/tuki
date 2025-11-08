@@ -16,7 +16,7 @@ const LinkHeader = () => {
               }`
             }
           >
-            All Links
+            Extract Links
           </NavLink>
         </li>
         <li className="">
@@ -46,7 +46,7 @@ const LinkHeader = () => {
               }`
             }
           >
-            Target Section
+            Hover Mode
           </NavLink>
         </li>
       </ul>
