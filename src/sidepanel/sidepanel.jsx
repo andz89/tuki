@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 
-import Header from "./components/header.jsx";
+import Header from "./components/headers/header.jsx";
 import PageInfo from "./components/pages/pageInfo.jsx";
 import Links from "./components/pages/links.jsx";
 
 import BrokenLinks from "./components/linksContent/BrokenLinks.jsx";
-import LinksHeader from "./components/LinkHeader.jsx";
+import LinksHeader from "./components/headers/LinkHeader.jsx";
 import ExtractLinks from "./components/linksContent/ExtractLinks.jsx";
 import PageChangeWatcher from "./components/helper/PageChangeWatcher.jsx";
 import GlobalTextHighlighter from "./components/helper/GlobalTextHighlighter.jsx";
@@ -73,12 +73,14 @@ function InnerApp() {
 
       <PageChangeWatcher onPageChange={handlePageChange} />
       <GlobalTextHighlighter />
-      <Routes>
-        <Route path="/" element={<PageInfo />} />
-        <Route path="/links" element={<Links />} />
-        <Route path="/broken-links" element={<BrokenLinks />} />
-        <Route path="/target-section" element={<ExtractLinks />} />
-      </Routes>
+      <div id="pages">
+        <Routes>
+          <Route path="/" element={<PageInfo />} />
+          <Route path="/links" element={<Links />} />
+          <Route path="/broken-links" element={<BrokenLinks />} />
+          <Route path="/target-section" element={<ExtractLinks />} />
+        </Routes>
+      </div>
     </div>
   );
 }

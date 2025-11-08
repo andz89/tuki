@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import InputSearch from "./helper/inputSearch.jsx";
+import InputSearch from "../helper/inputSearch.jsx";
 const header = () => {
   const location = useLocation();
   const isLinksActive = [
@@ -43,12 +43,12 @@ const header = () => {
         </li>
         <li className="">
           <a className="inline-block p-2 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">
-            Element
+            HTML
           </a>
         </li>
         <li className="">
           <a className="inline-block p-2 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">
-            Inspect
+            Auto Text
           </a>
         </li>
         <li>

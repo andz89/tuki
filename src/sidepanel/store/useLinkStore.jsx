@@ -23,46 +23,50 @@ export const useLinkStore = create((set, get) => ({
       });
 
       if (!tab?.id) {
-        set({ error: "No active tab found." });
-        return;
+        console.warn("No active tab found.");
+        return [];
       }
 
       const activeTabId = tab.id;
-      set({ tabId: activeTabId }); // ✅ store the tabId
 
-      // // (optional) Inject content script each time
-      // await chrome.scripting.executeScript({
-      //   target: { tabId: activeTabId },
-      //   files: ["content.js"],
-      // });
+      // Optional: store tabId if needed
+      set({ tabId: activeTabId });
 
-      chrome.tabs.sendMessage(
-        activeTabId,
-        { type: "extract-links" },
-        (response) => {
-          if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError.message);
-            set({ error: "Cannot access this page’s links." });
-            return;
+      // Wrap sendMessage in a promise to return data
+      const links = await new Promise((resolve, reject) => {
+        chrome.tabs.sendMessage(
+          activeTabId,
+          { type: "extract-links" },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              console.error(chrome.runtime.lastError.message);
+              reject(new Error("Cannot access this page’s links."));
+              return;
+            }
+
+            if (!response) {
+              console.warn("No direct response from content script.");
+              resolve([]);
+              return;
+            }
+
+            if (response.data) {
+              console.log(
+                `✅ Links fetched from tab ${activeTabId}:`,
+                response.data
+              );
+              resolve(response.data);
+            } else {
+              resolve([]);
+            }
           }
+        );
+      });
 
-          if (!response) {
-            console.warn("No direct response from content script.");
-            return;
-          }
-
-          if (response.data) {
-            set({ allLinks: response.data, error: "" });
-            console.log(
-              `✅ Links fetched from tab ${activeTabId}:`,
-              response.data
-            );
-          }
-        }
-      );
+      return links; // ✅ return the fetched links
     } catch (err) {
       console.error("Link fetch error:", err);
-      set({ error: "Error fetching links." });
+      return [];
     }
   },
 }));

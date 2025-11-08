@@ -1,22 +1,33 @@
 import { useEffect } from "react";
 import Mark from "mark.js";
-
+import { useLocation } from "react-router-dom";
 export default function useMarkText() {
+  const location = useLocation(); // 👈 detects your extension's current route (tab)
   useEffect(() => {
     const input = document.querySelector("#highlight-input");
+    const target = document.querySelector("#pages");
     if (!input) return;
 
-    const markInstance = new Mark(document.body);
+    const markInstance = new Mark(target);
 
+    const markOptions = {
+      exclude: [".no-highlight"], // <-- must be passed to mark(), not to constructor
+      separateWordSearch: false,
+    };
+    let timer;
     const handleInput = () => {
-      const keyword = input.value.trim();
-      markInstance.unmark({
-        done: () => {
-          if (keyword) {
-            markInstance.mark(keyword);
-          }
-        },
-      });
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const keyword = input.value.trim();
+        // remove previous marks first, then mark new ones
+        markInstance.unmark({
+          done: () => {
+            if (keyword) {
+              markInstance.mark(keyword, markOptions);
+            }
+          },
+        });
+      }, 200);
     };
 
     input.addEventListener("input", handleInput);
@@ -27,8 +38,9 @@ export default function useMarkText() {
     // cleanup listener
     return () => {
       input.removeEventListener("input", handleInput);
+      input.removeEventListener("click", handleInput);
     };
-  }, []);
+  }, [location.pathname]);
 
   return null; // nothing visible, just runs globally
 }

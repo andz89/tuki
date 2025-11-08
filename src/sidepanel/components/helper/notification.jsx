@@ -18,7 +18,7 @@ export default function AlertBox({ message, type = "info", duration }) {
   if (!visible || !message) return null;
 
   const styles = {
-    base: "px-2 py-2 rounded-lg shadow-lg mb-2 text-sm font-medium transition-all duration-300",
+    base: "px-2 py-2 rounded-lg shadow-lg mb-2 text-sm font-medium transition-all duration-300 no-highlight",
     types: {
       success: "bg-green-50 text-green-800 border border-green-300",
       error: "bg-red-50 text-red-800 border border-red-300",

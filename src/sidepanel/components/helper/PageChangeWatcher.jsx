@@ -21,6 +21,11 @@ export default function PageChangeWatcher({ onPageChange }) {
         console.log("🔄 Tab switched — stopping hover...");
         stopHoveringLink();
       }
+
+      if (message.action === "tabReload") {
+        console.log("🔁 Tab reloaded — reloading app...");
+        window.location.reload(); // 🔹 reload your extension React UI
+      }
     };
 
     // Listen for messages sent from background.js

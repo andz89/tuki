@@ -55,7 +55,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
           console.log("✅ content.js already active on this tab.");
         }
 
-        chrome.runtime.sendMessage({ action: "tabChanged" });
+        chrome.runtime.sendMessage({ action: "tabReload" });
       });
     } catch (e) {
       console.warn("Tab update error:", e.message);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useLinkStore } from "../../store/useLinkStore";
 import { useNavigate } from "react-router-dom";
 import AlertBox from "../helper/notification";
@@ -8,10 +8,8 @@ export default function BrokenLinksPanel() {
     brokenLinks,
     addBrokenLink,
     resetBrokenLinks,
-    fetchLinks,
-    requestTabId,
-    error,
     tabId,
+    fetchLinks,
     setRequestTabId,
   } = useLinkStore();
 
@@ -19,8 +17,7 @@ export default function BrokenLinksPanel() {
   const [loading, setLoading] = useState(false);
   const [linkStatuses, setLinkStatuses] = useState({}); // store status per uniqueClass
 
-  const tabMismatch =
-    requestTabId && currentTabId && requestTabId !== currentTabId;
+  const tabMismatch = tabId && currentTabId && tabId !== currentTabId;
 
   // ************************* get current tab id on load & tab switch *****************************//
   const updateCurrentTab = async () => {
@@ -31,29 +28,19 @@ export default function BrokenLinksPanel() {
     if (tab?.id) setCurrentTabId(tab.id);
   };
 
-  useEffect(() => {
+  const getLinks = async () => {
     updateCurrentTab();
-
-    const handleTabChange = (message) => {
-      if (message.action === "tabChanged") {
-        console.log("🔄 Tab changed, fetching new tab ID...");
-        updateCurrentTab();
-      }
-    };
-
-    chrome.runtime.onMessage.addListener(handleTabChange);
-    return () => chrome.runtime.onMessage.removeListener(handleTabChange);
-  }, []);
-  //**************************************end***********************************//
-
+    const links = await fetchLinks(); // fetch actual data
+    processBrokenLinks(links);
+  };
   // ********************* get the saved links and check the links. this function will trigger when visiting the page **********************
-  const processBrokenLinks = async () => {
+  const processBrokenLinks = async (links = allLinks) => {
     setRequestTabId(tabId); //save the tabId when processing starts, every request will have its own tabId
     setLoading(true);
     resetBrokenLinks(); // clear previous broken links
 
     // check each link
-    const fetchPromises = allLinks.map((data) => {
+    const fetchPromises = links.map((data) => {
       if (data.href.startsWith("mailto:")) return Promise.resolve();
 
       return fetch(data.href, { method: "HEAD" })
@@ -72,20 +59,11 @@ export default function BrokenLinksPanel() {
   };
 
   useEffect(() => {
+    updateCurrentTab();
+
     if (allLinks.length > 0 && brokenLinks.length === 0) {
-      processBrokenLinks();
+      processBrokenLinks(allLinks);
     }
-
-    // --- listen for tab changes to refetch links ---
-    const handleTabChange = (message) => {
-      if (message.action === "tabChanged") {
-        console.log(
-          "🔄 Tab changed, clearing stored links and resetting state..."
-        );
-
-        fetchLinks();
-      }
-    };
 
     // Listener for messages from content.js to get link status
     const handleMessageLinkStatus = (message, sender, sendResponse) => {
@@ -97,15 +75,18 @@ export default function BrokenLinksPanel() {
         }));
       }
     };
-
+    const handleTabChange = (message) => {
+      if (message.action === "tabChanged") {
+        console.log("🔄 Tab changed, fetching new tab ID...");
+        updateCurrentTab();
+      }
+    };
     chrome.runtime.onMessage.addListener(handleMessageLinkStatus);
-
     chrome.runtime.onMessage.addListener(handleTabChange);
-
     // ✅ Cleanup listener on unmount to avoid duplicates
     return () => {
-      chrome.runtime.onMessage.removeListener(handleTabChange);
       chrome.runtime.onMessage.removeListener(handleMessageLinkStatus);
+      chrome.runtime.onMessage.removeListener(handleTabChange);
     };
   }, []);
   //**************************************end***********************************//
@@ -127,12 +108,13 @@ export default function BrokenLinksPanel() {
   return (
     <div className="p-3">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="font-semibold text-gray-800 text-lg">Broken Links</h2>
+        <h2 className="font-semibold text-gray-800 text-lg no-highlight">
+          Broken Links
+        </h2>
         <span
-          className="text-sm  bg-yellow-500 font-medium rounded-sm p-2 text-black cursor-pointer"
+          className="text-sm  bg-yellow-500 font-medium rounded-sm p-2 text-black cursor-pointer no-highlight"
           onClick={async () => {
-            await fetchLinks();
-            await processBrokenLinks();
+            await getLinks();
           }}
         >
           Refresh
