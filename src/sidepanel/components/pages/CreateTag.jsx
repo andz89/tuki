@@ -105,9 +105,13 @@ export default function CreateTagForm() {
         newTagString +
         htmlSnippet.slice(closingTagIndex);
     }
-
-    // Beautify before displaying
-    const formatted = beautifyHtml(updatedSnippet, { indent_size: 4 });
+    const formatted = beautifyHtml(updatedSnippet, {
+      indent_size: 2,
+      preserve_newlines: true,
+      max_preserve_newlines: 1,
+      wrap_line_length: 0,
+      inline: [], // 👈 disables inline collapsing
+    });
     setHtmlSnippet(formatted);
 
     resetForm();
@@ -118,8 +122,17 @@ export default function CreateTagForm() {
     if (htmlSnippet && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-  }, [htmlSnippet]);
-
+  }, []);
+  const beautifyCode = () => {
+    const formatted = beautifyHtml(htmlSnippet, {
+      indent_size: 2,
+      preserve_newlines: true,
+      max_preserve_newlines: 1,
+      wrap_line_length: 0,
+      inline: [], // 👈 disables inline collapsing
+    });
+    setHtmlSnippet(formatted);
+  };
   return (
     <div className="p-4 text-sm">
       {/* Generated HTML Section */}
@@ -128,16 +141,20 @@ export default function CreateTagForm() {
           <p className="font-medium mb-1">Generated HTML:</p>
           <textarea
             value={htmlSnippet}
-            onChange={(e) =>
-              setHtmlSnippet(beautifyHtml(e.target.value, { indent_size: 4 }))
-            }
+            onChange={(e) => setHtmlSnippet(e.target.value)}
             className="w-full border rounded p-2 font-mono text-xs bg-gray-100 outline-1 outline-gray-400 focus:outline-2 focus:outline-gray-500 h-20"
           ></textarea>
 
           <div className="flex gap-2 mt-2">
             <button
-              onClick={() => setMode("parent")}
+              onClick={() => beautifyCode()}
               className="bg-green-500 text-white rounded px-2 py-1 text-xs"
+            >
+              Beautify
+            </button>
+            <button
+              onClick={() => setMode("parent")}
+              className="bg-slate-900 text-white rounded px-2 py-1 text-xs"
             >
               + Add Parent Tag
             </button>
