@@ -34,9 +34,9 @@ const LinkHeader = () => {
             Input tags
           </NavLink>
         </li>
-        {/* <li className="">
+        <li className="">
           <NavLink
-            to="/target-section"
+            to="/create-tag"
             aria-current="page"
             className={({ isActive }) =>
               `inline-block p-2       ${
@@ -46,9 +46,9 @@ const LinkHeader = () => {
               }`
             }
           >
-            Hover Mode
+            Create Tag
           </NavLink>
-        </li> */}
+        </li>
       </ul>
     </div>
   );

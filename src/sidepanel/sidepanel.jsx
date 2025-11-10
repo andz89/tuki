@@ -16,6 +16,7 @@ import InputSearch from "./components/helper/inputSearch.jsx";
 import Html from "./components/pages/Html.jsx";
 import HTML_header from "./components/headers/HTML_header.jsx";
 import Input_tags from "./components/pages/Input_tags.jsx";
+import CreateTag from "./components/pages/CreateTag.jsx";
 function InnerApp() {
   const [isInjected, setIsInjected] = useState(false);
   const handlePageChange = (path) => {
@@ -88,6 +89,7 @@ function InnerApp() {
           <Route path="/target-section" element={<HoverLinks />} />
           <Route path="/html" element={<Html />} />
           <Route path="/input-tags" element={<Input_tags />} />
+          <Route path="/create-tag" element={<CreateTag />} />
         </Routes>
       </div>
     </div>
