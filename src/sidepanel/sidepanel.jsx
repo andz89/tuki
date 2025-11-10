@@ -13,7 +13,9 @@ import HoverLinks from "./components/pages/HoverLinks.jsx";
 import PageChangeWatcher from "./components/helper/PageChangeWatcher.jsx";
 import GlobalTextHighlighter from "./components/helper/GlobalTextHighlighter.jsx";
 import InputSearch from "./components/helper/inputSearch.jsx";
-
+import Html from "./components/pages/Html.jsx";
+import HTML_header from "./components/headers/HTML_header.jsx";
+import Input_tags from "./components/pages/Input_tags.jsx";
 function InnerApp() {
   const [isInjected, setIsInjected] = useState(false);
   const handlePageChange = (path) => {
@@ -63,12 +65,17 @@ function InnerApp() {
     "/broken-links",
     "/target-section",
   ].includes(location.pathname);
+  const showHTMLHeader = ["/html", "/input-tags"].includes(location.pathname);
+  const hideInput = ["/input-tags", "/html"].includes(location.pathname);
+
   return (
     <div className="bg-white">
       <div className="sticky top-0 z-50 ">
         <Header />
         {showLinksHeader && <LinksHeader />}
-        <InputSearch />
+        {showHTMLHeader && <HTML_header />}
+
+        {!hideInput && <InputSearch />}
       </div>
 
       <PageChangeWatcher onPageChange={handlePageChange} />
@@ -79,6 +86,8 @@ function InnerApp() {
           <Route path="/links" element={<AllLinksExtractLinks />} />
           <Route path="/broken-links" element={<BrokenLinks />} />
           <Route path="/target-section" element={<HoverLinks />} />
+          <Route path="/html" element={<Html />} />
+          <Route path="/input-tags" element={<Input_tags />} />
         </Routes>
       </div>
     </div>

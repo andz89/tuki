@@ -1,6 +1,7 @@
 import { use, useEffect, useState } from "react";
-import { useLinkStore } from "../../store/useLinkStore";
+import { useExtractLinksStore } from "../../store/useExtractLinksStore";
 import AlertBox from "../helper/notification";
+import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
 export default function LinksPanel() {
   // const [links, setLinks] = useState([]);
 
@@ -9,13 +10,13 @@ export default function LinksPanel() {
   const {
     allLinks,
     setAllLinks,
-
+    requestTabId,
     error,
     tabId,
     fetchLinks,
     setRequestTabId,
-    requestTabId,
-  } = useLinkStore();
+  } = useExtractLinksStore();
+  const { copyToClipboard, handleFindOnPage } = useHelperFunctionStore();
   // ************************* get current tab id on load & tab switch *****************************//
   const [loading, setLoading] = useState(false);
   const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
@@ -29,6 +30,7 @@ export default function LinksPanel() {
     if (tab?.id) setCurrentTabId(tab.id);
   };
   const getLinks = async () => {
+    setLinkStatuses({});
     setLoading(true);
     try {
       const links = await fetchLinks(); // returns actual data
@@ -68,20 +70,6 @@ export default function LinksPanel() {
     };
   }, []);
 
-  // helper: copy link to clipboard
-  const handleCopy = (href) => {
-    navigator.clipboard.writeText(href);
-  };
-
-  const handleFindOnPage = (uniqueClass) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        type: "window-displayLink",
-        targetHref: uniqueClass, // match content.js
-      });
-    });
-  };
-
   return (
     <div className="p-3">
       <div className="flex gap-2 mb-4 flex-col mx-2">
@@ -106,6 +94,9 @@ export default function LinksPanel() {
         />
       )}
       {error && <p className="text-sm text-red-600 mb-2">{error}</p>}
+      {!loading && requestTabId && allLinks.length === 0 && (
+        <p className="text-sm text-gray-500 mb-2">No broken links found.</p>
+      )}
       {loading === true ? (
         <p className="text-sm text-gray-500 no-highlight">Loading links...</p>
       ) : (
@@ -127,7 +118,7 @@ export default function LinksPanel() {
                 </button>
 
                 <button
-                  onClick={() => handleCopy(link.href)}
+                  onClick={() => copyToClipboard(link.href)}
                   className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer no-highlight"
                 >
                   Copy link

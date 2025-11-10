@@ -1,10 +1,11 @@
 import { use, useEffect, useState } from "react";
-import { useLinkStore } from "../../store/useLinkStore";
+import { useBrokenLinksStore } from "../../store/useBrokenLinksStore";
 import { useNavigate } from "react-router-dom";
 import AlertBox from "../helper/notification";
+import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
+
 export default function BrokenLinksPanel() {
   const {
-    allLinks,
     brokenLinks,
     addBrokenLink,
     resetBrokenLinks,
@@ -12,11 +13,12 @@ export default function BrokenLinksPanel() {
     fetchLinks,
     setRequestTabId,
     requestTabId,
-    setAllLinks,
-  } = useLinkStore();
+  } = useBrokenLinksStore();
+  const { copyToClipboard, handleFindOnPage } = useHelperFunctionStore();
 
   const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(null);
+
   const [linkStatuses, setLinkStatuses] = useState({}); // store status per uniqueClass
 
   const tabMismatch = tabId && currentTabId && tabId !== currentTabId;
@@ -31,13 +33,12 @@ export default function BrokenLinksPanel() {
   };
 
   const getLinks = async () => {
-    tabMismatch ? setAllLinks([]) : null; // clear links on requestTabId change
     updateCurrentTab();
     const links = await fetchLinks(); // fetch actual data
     processBrokenLinks(links);
   };
   // ********************* get the saved links and check the links. this function will trigger when visiting the page **********************
-  const processBrokenLinks = async (links = allLinks) => {
+  const processBrokenLinks = async (links = links) => {
     setRequestTabId(tabId); //save the tabId when processing starts, every request will have its own tabId
     setLoading(true);
     resetBrokenLinks(); // clear previous broken links
@@ -58,15 +59,12 @@ export default function BrokenLinksPanel() {
     });
 
     await Promise.all(fetchPromises);
+
     setLoading(false);
   };
 
   useEffect(() => {
     updateCurrentTab();
-
-    // if (allLinks.length > 0 && brokenLinks.length === 0) {
-    //   processBrokenLinks(allLinks);
-    // }
 
     // Listener for messages from content.js to get link status
     const handleMessageLinkStatus = (message, sender, sendResponse) => {
@@ -94,19 +92,7 @@ export default function BrokenLinksPanel() {
   }, []);
   //**************************************end***********************************//
 
-  // ---------------- helper: find the target link on the page ------------
-  const handleFindOnPage = (uniqueClass) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        type: "window-displayLink",
-        targetHref: uniqueClass, // match content.js
-      });
-    });
-  };
   // ---------------- helper: copy link to clipboard ------------
-  const handleCopy = (href) => {
-    navigator.clipboard.writeText(href);
-  };
 
   return (
     <div className="p-3">
@@ -125,7 +111,7 @@ export default function BrokenLinksPanel() {
         <p className="text-sm text-gray-500 mb-2">Checking links...</p>
       )}
 
-      {!loading && brokenLinks.length === 0 && requestTabId !== null && (
+      {!loading && requestTabId && brokenLinks.length === 0 && (
         <p className="text-sm text-gray-500 mb-2">No broken links found.</p>
       )}
       {tabMismatch && (
@@ -158,7 +144,7 @@ export default function BrokenLinksPanel() {
                 </button>
 
                 <button
-                  onClick={() => handleCopy(link.href)}
+                  onClick={() => copyToClipboard(link.href)}
                   className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer"
                 >
                   Copy link

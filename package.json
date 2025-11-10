@@ -8,6 +8,7 @@
     "@tailwindcss/postcss": "^4.1.16",
     "@vitejs/plugin-react": "^4",
     "autoprefixer": "^10.4.21",
+    "htmlhint": "^1.7.1",
     "postcss": "^8.5.6",
     "rollup-plugin-copy": "^3",
     "tailwindcss": "^4.1.16",

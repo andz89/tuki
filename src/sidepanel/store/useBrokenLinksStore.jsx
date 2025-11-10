@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export const useLinkStore = create((set, get) => ({
+export const useBrokenLinksStore = create((set, get) => ({
   allLinks: [],
   brokenLinks: [],
   error: "",
@@ -33,6 +33,7 @@ export const useLinkStore = create((set, get) => ({
 
       // Optional: store tabId if needed
       set({ tabId: activeTabId });
+      set({ requestTabId: activeTabId });
 
       // Wrap sendMessage in a promise to return data
       const links = await new Promise((resolve, reject) => {

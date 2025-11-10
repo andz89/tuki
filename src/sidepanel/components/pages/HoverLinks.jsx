@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useHoverLinkStore } from "../../store/useHoverLinkStore";
-
+import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
 import AlertBox from "../helper/notification";
 export default function ExtractLinks() {
   const {
@@ -11,7 +11,7 @@ export default function ExtractLinks() {
     requestTabId,
     setRequestTabId,
   } = useHoverLinkStore();
-
+  const { copyToClipboard, handleFindOnPage } = useHelperFunctionStore();
   const [isFetching, setIsFetching] = useState(false);
   const [copied, setCopied] = useState(null);
   const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
@@ -126,28 +126,6 @@ export default function ExtractLinks() {
     setIsFetching(false);
   };
 
-  // 🔹 Stop fetching if tab changes
-  // useEffect(() => {
-  //   const listener = (message) => {
-  //     if (message.action === "tabChanged") {
-  //       console.log("🔄 Tab changed, stopping fetch...");
-  //       handleStopFetch();
-  //     }
-  //   };
-
-  //   chrome.runtime.onMessage.addListener(listener);
-
-  //   return () => chrome.runtime.onMessage.removeListener(listener);
-  // }, []);
-
-  const handleFindOnPage = (uniqueClass) => {
-    if (!requestTabId) return;
-    chrome.tabs.sendMessage(requestTabId, {
-      type: "window-displayLink",
-      targetHref: uniqueClass,
-    });
-  };
-
   const handleCopy = async (href) => {
     try {
       await navigator.clipboard.writeText(href);
@@ -210,7 +188,7 @@ export default function ExtractLinks() {
                 </button>
 
                 <button
-                  onClick={() => handleCopy(link.href)}
+                  onClick={() => copyToClipboard(link.href)}
                   className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer"
                 >
                   {copied === link.href ? "Copied!" : "Copy link"}

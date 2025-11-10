@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import AlertBox from "../helper/notification";
 export default function CustomTags() {
   const [hyvorTag, setHyvorTag] = useState(null);
   const [error, setError] = useState("");
@@ -18,28 +18,24 @@ export default function CustomTags() {
         (response) => {
           if (chrome.runtime.lastError) {
             console.error("Error:", chrome.runtime.lastError.message);
-            setError("Cannot access this page's data.");
+
             return;
           }
 
           if (!response || !response.data) {
-            setError("No response from content script.");
             return;
           }
 
           if (response.data.length === 0) {
-            setError("No hyvor talk comments element found.");
             setHyvorTag(null);
             return;
           }
 
           setHyvorTag(response.data[0]);
-          setError("");
         }
       );
     } catch (err) {
       console.error("Fetch error:", err);
-      setError("Error fetching element data.");
     }
   }
 
@@ -48,7 +44,6 @@ export default function CustomTags() {
 
     const listener = (message) => {
       if (message.action === "tabChanged") {
-        console.log("🔄 Tab changed, re-fetching element...");
         fetchHyvorTag();
       }
     };
@@ -59,14 +54,18 @@ export default function CustomTags() {
 
   // 🧩 Render
   if (error) {
-    return <p className="text-sm text-black bg-yellow-500 p-2">{error}</p>;
+    <AlertBox
+      message={<>Oops! Something went wrong. Please refresh the page.</>}
+      type="error"
+    />;
   }
 
   if (!hyvorTag) {
     return (
-      <div>
-        <p className="text-sm text-black bg-yellow-500 p-2">{error}</p>
-      </div>
+      <AlertBox
+        message={<>No hyvor talk comments element found.</>}
+        type="info"
+      />
     );
   }
 

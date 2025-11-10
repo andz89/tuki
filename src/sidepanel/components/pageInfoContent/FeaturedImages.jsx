@@ -1,6 +1,6 @@
 // src/components/pages/PageInfo.jsx
 import React, { useEffect, useState } from "react";
-
+import AlertBox from "../helper/notification";
 export default function FeaturedImages() {
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
@@ -52,13 +52,17 @@ export default function FeaturedImages() {
   return (
     <div>
       {error && (
-        <p className="text-sm text-black bg-yellow-500 p-2 mb-2">{error}</p>
+        <AlertBox
+          message={<>Oops! Something went wrong. Please refresh the page.</>}
+          type="error"
+        />
       )}
 
       {images.length === 0 && !error ? (
-        <p className="text-sm text-black bg-yellow-500 p-2">
-          No featured images found.
-        </p>
+        <AlertBox
+          message={<>No featuredImages found on this page.</>}
+          type="info"
+        />
       ) : (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-2 border border-gray-200 dark:border-gray-700">
           <p className="text-base font-medium text-gray-800 dark:text-gray-200 mb-2">

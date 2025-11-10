@@ -3,12 +3,10 @@ import { NavLink, useLocation } from "react-router-dom";
 import InputSearch from "../helper/inputSearch.jsx";
 const header = () => {
   const location = useLocation();
-  const isLinksActive = [
-    "/links",
-    "/current-links",
-    "/broken-links",
-    "/target-section",
-  ].includes(location.pathname);
+  const isLinksActive = ["/links", "/broken-links", "/target-section"].includes(
+    location.pathname
+  );
+  const isHTMLActive = ["/html", "/input-tags"].includes(location.pathname);
   return (
     <div className="bg-white">
       <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
@@ -42,15 +40,20 @@ const header = () => {
           </NavLink>
         </li>
         <li className="">
-          <a className="inline-block p-2 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">
+          <NavLink
+            to="/html"
+            className={({}) =>
+              `inline-block p-2   rounded-t-lg    ${
+                isHTMLActive
+                  ? "text-yellow-500 bg-gray-100 dark:bg-gray-800 dark:text-blue-500"
+                  : "inline-block p-2 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+              }`
+            }
+          >
             HTML
-          </a>
+          </NavLink>
         </li>
-        <li className="">
-          <a className="inline-block p-2 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">
-            Auto Text
-          </a>
-        </li>
+
         <li>
           <a className="inline-block p-2 text-gray-400 rounded-t-lg cursor-not-allowed dark:text-gray-500">
             Settings

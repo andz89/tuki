@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import AlertBox from "../helper/notification";
 
 export default function PageDetails() {
   const [pageInfo, setPageInfo] = useState({
@@ -73,7 +74,10 @@ export default function PageDetails() {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-2   border border-gray-200 dark:border-gray-700">
       {pageInfo.error ? (
-        <p className="text-red-600">{pageInfo.error}</p>
+        <AlertBox
+          message={<>Oops! Something went wrong. Please refresh the page.</>}
+          type="error"
+        />
       ) : (
         <div className=" ">
           <p className="text-base font-medium text-gray-800 dark:text-gray-200 mb-1">

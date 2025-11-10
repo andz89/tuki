@@ -62,3 +62,27 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
     }
   }
 });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === "FETCH_PAGE_HTML" && message.url) {
+    (async () => {
+      try {
+        const res = await fetch(message.url, { credentials: "omit" });
+        if (!res.ok) {
+          sendResponse({
+            ok: false,
+            status: res.status,
+            statusText: res.statusText,
+          });
+          return;
+        }
+        const html = await res.text();
+        sendResponse({ ok: true, html });
+      } catch (err) {
+        sendResponse({ ok: false, error: err.message });
+      }
+    })();
+
+    return true;
+  }
+});
