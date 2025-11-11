@@ -28,6 +28,7 @@ const commonTags = [
 ];
 
 export default function CreateTagForm() {
+  const [caretPosition, setCaretPosition] = useState(0);
   const [mode, setMode] = useState("create"); // "create" | "parent" | "child"
   const [formData, setFormData] = useState({
     tag: "",
@@ -75,11 +76,46 @@ export default function CreateTagForm() {
     attributes.forEach(({ name, value }) => {
       if (name.trim()) attrStrings.push(`${name}="${value}"`);
     });
+
+    // List of HTML void (self-closing) elements
+    const voidElements = [
+      "area",
+      "base",
+      "br",
+      "col",
+      "embed",
+      "hr",
+      "img",
+      "input",
+      "link",
+      "meta",
+      "param",
+      "source",
+      "track",
+      "wbr",
+    ];
+
+    // If tag is a void element → self-close
+    if (voidElements.includes(tag.toLowerCase())) {
+      return `<${tag}${
+        attrStrings.length ? " " + attrStrings.join(" ") : ""
+      } />`;
+    }
+
+    // Otherwise → normal opening/closing tag
     return `<${tag}${
       attrStrings.length ? " " + attrStrings.join(" ") : ""
     }></${tag}>`;
   };
-
+  // capture caret position on mouse interaction
+  const handleMouseDown = (e) => {
+    // Wait until mouse is released so caret is updated properly
+    requestAnimationFrame(() => {
+      const pos = e.target.selectionStart;
+      setCaretPosition(pos);
+      console.log("Caret position:", pos);
+    });
+  };
   const handleSubmit = () => {
     const { tag } = formData;
     if (!tag.trim()) return;
@@ -89,21 +125,17 @@ export default function CreateTagForm() {
     let updatedSnippet = htmlSnippet;
 
     if (mode === "create" || !htmlSnippet) {
-      // Normal tag creation
-      updatedSnippet = newTagString;
+      // insert tag at last known caret position
+      const start = caretPosition ?? htmlSnippet.length;
+      const before = updatedSnippet.slice(0, start);
+      const after = updatedSnippet.slice(start);
+      updatedSnippet = before + newTagString + after;
     } else if (mode === "parent") {
       // Wrap existing HTML
       updatedSnippet = newTagString.replace(
         `></${tag}>`,
         `>${htmlSnippet}</${tag}>`
       );
-    } else if (mode === "child") {
-      // Insert inside
-      const closingTagIndex = htmlSnippet.lastIndexOf(`</`);
-      updatedSnippet =
-        htmlSnippet.slice(0, closingTagIndex) +
-        newTagString +
-        htmlSnippet.slice(closingTagIndex);
     }
     const formatted = beautifyHtml(updatedSnippet, {
       indent_size: 2,
@@ -141,6 +173,7 @@ export default function CreateTagForm() {
           <p className="font-medium mb-1">Generated HTML:</p>
           <textarea
             value={htmlSnippet}
+            onMouseDown={handleMouseDown}
             onChange={(e) => setHtmlSnippet(e.target.value)}
             className="w-full border rounded p-2 font-mono text-xs bg-gray-100 outline-1 outline-gray-400 focus:outline-2 focus:outline-gray-500 h-20"
           ></textarea>
@@ -157,12 +190,6 @@ export default function CreateTagForm() {
               className="bg-slate-900 text-white rounded px-2 py-1 text-xs"
             >
               + Add Parent Tag
-            </button>
-            <button
-              onClick={() => setMode("child")}
-              className="bg-blue-500 text-white rounded px-2 py-1 text-xs"
-            >
-              + Add Child Tag
             </button>
           </div>
         </div>

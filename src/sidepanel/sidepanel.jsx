@@ -66,8 +66,12 @@ function InnerApp() {
     "/broken-links",
     "/target-section",
   ].includes(location.pathname);
-  const showHTMLHeader = ["/html", "/input-tags"].includes(location.pathname);
-  const hideInput = ["/input-tags", "/html"].includes(location.pathname);
+  const showHTMLHeader = ["/html", "/input-tags", "/create-tag"].includes(
+    location.pathname
+  );
+  const hideInput = ["/input-tags", "/html", "/create-tag"].includes(
+    location.pathname
+  );
 
   return (
     <div className="bg-white">
