@@ -17,6 +17,7 @@ import Html from "./components/pages/Html.jsx";
 import HTML_header from "./components/headers/HTML_header.jsx";
 import Input_tags from "./components/pages/Input_tags.jsx";
 import CreateTag from "./components/pages/CreateTag.jsx";
+import CustomContextMenu from "./components/helper/ContextMenu.jsx";
 function InnerApp() {
   const [isInjected, setIsInjected] = useState(false);
   const handlePageChange = (path) => {
@@ -85,6 +86,7 @@ function InnerApp() {
 
       <PageChangeWatcher onPageChange={handlePageChange} />
       <GlobalTextHighlighter />
+
       <div id="pages">
         <Routes>
           <Route path="/" element={<PageInfo />} />
@@ -92,7 +94,7 @@ function InnerApp() {
           <Route path="/broken-links" element={<BrokenLinks />} />
           <Route path="/target-section" element={<HoverLinks />} />
           <Route path="/html" element={<Html />} />
-          <Route path="/input-tags" element={<Input_tags />} />
+          {/* <Route path="/input-tags" element={<Input_tags />} /> */}
           <Route path="/create-tag" element={<CreateTag />} />
         </Routes>
       </div>

@@ -19,7 +19,7 @@ const LinkHeader = () => {
             Validate Page
           </NavLink>
         </li>
-        <li className="">
+        {/* <li className="">
           <NavLink
             to="/input-tags"
             aria-current="page"
@@ -33,7 +33,7 @@ const LinkHeader = () => {
           >
             Input tags
           </NavLink>
-        </li>
+        </li> */}
         <li className="">
           <NavLink
             to="/create-tag"
