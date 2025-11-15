@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import AlertBox from "../helper/notification";
+import {
+  CopyNotificationElement,
+  AlertBoxElement,
+} from "../helper/Notification.jsx";
 export default function ModuleCategory() {
   const [elements, setElements] = useState([]);
   const [error, setError] = useState(null);
@@ -42,7 +45,7 @@ export default function ModuleCategory() {
 
   if (error) {
     return (
-      <AlertBox
+      <AlertBoxElement
         message={<>Oops! Something went wrong. Please refresh the page.</>}
         type="error"
       />
@@ -51,7 +54,10 @@ export default function ModuleCategory() {
 
   if (elements.length === 0) {
     return (
-      <AlertBox message={<>No Speaker Module Category found.</>} type="info" />
+      <AlertBoxElement
+        message={<>No Speaker Module Category found.</>}
+        type="info"
+      />
     );
   }
 

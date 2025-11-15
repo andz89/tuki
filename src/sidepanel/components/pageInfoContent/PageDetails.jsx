@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import AlertBox from "../helper/notification";
-
+import {
+  CopyNotificationElement,
+  AlertBoxElement,
+} from "../helper/Notification.jsx";
 export default function PageDetails() {
   const [pageInfo, setPageInfo] = useState({
     title: "",
@@ -74,7 +76,7 @@ export default function PageDetails() {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-2   border border-gray-200 dark:border-gray-700">
       {pageInfo.error ? (
-        <AlertBox
+        <AlertBoxElement
           message={<>Oops! Something went wrong. Please refresh the page.</>}
           type="error"
         />

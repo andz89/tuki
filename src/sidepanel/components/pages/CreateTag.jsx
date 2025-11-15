@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { html as beautifyHtml } from "js-beautify";
 import { HTMLHint } from "htmlhint";
-import AlertBox from "../helper/notification";
+import {
+  CopyNotificationElement,
+  AlertBoxElement,
+} from "../helper/Notification.jsx";
 import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
 const commonTags = [
   "div",
@@ -340,7 +343,7 @@ export default function CreateTagForm() {
               "Create New Tag"
             ) : (
               <>
-                <AlertBox
+                <AlertBoxElement
                   message={
                     <>
                       Creating Parent Tag for:{" "}

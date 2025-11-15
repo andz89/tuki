@@ -3,7 +3,10 @@ import { useBrokenLinksStore } from "../../store/useBrokenLinksStore";
 import { useNavigate } from "react-router-dom";
 import AlertBox from "../helper/notification";
 import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
-
+import {
+  CopyNotificationElement,
+  AlertBoxElement,
+} from "../helper/Notification.jsx";
 export default function BrokenLinksPanel() {
   const {
     brokenLinks,
@@ -15,13 +18,23 @@ export default function BrokenLinksPanel() {
     requestTabId,
   } = useBrokenLinksStore();
   const { copyToClipboard, handleFindOnPage } = useHelperFunctionStore();
+  const [copiedUniqueClass, setCopiedUniqueClass] = useState("");
 
+  const [copied, setCopied] = useState(false);
   const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
   const [loading, setLoading] = useState(null);
 
   const [linkStatuses, setLinkStatuses] = useState({}); // store status per uniqueClass
 
   const tabMismatch = tabId && currentTabId && tabId !== currentTabId;
+
+  const handleCopy = (hrefLink, uniqueClass) => {
+    copyToClipboard(hrefLink);
+    setCopied(true);
+    setCopiedUniqueClass(uniqueClass);
+    // Hide message after 1.5 seconds
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   // ************************* get current tab id on load & tab switch *****************************//
   const updateCurrentTab = async () => {
@@ -115,7 +128,7 @@ export default function BrokenLinksPanel() {
         <p className="text-sm text-gray-500 mb-2">No broken links found.</p>
       )}
       {tabMismatch && (
-        <AlertBox
+        <AlertBoxElement
           message={
             <>
               <span className="font-medium">Warning alert!</span> ⚠️ Looks like
@@ -144,14 +157,17 @@ export default function BrokenLinksPanel() {
                 </button>
 
                 <button
-                  onClick={() => copyToClipboard(link.href)}
+                  onClick={() => handleCopy(link.href, link.uniqueClass)}
                   className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer"
                 >
                   Copy link
+                  {copiedUniqueClass === link.uniqueClass && copied && (
+                    <CopyNotificationElement />
+                  )}
                 </button>
               </div>
               {linkStatuses[link.uniqueClass] === "hidden" && (
-                <AlertBox
+                <AlertBoxElement
                   message={`This link is hidden on the page and cannot be displayed. ID: ${link.uniqueClass}`}
                   type="warning"
                 />

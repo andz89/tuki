@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useHoverLinkStore } from "../../store/useHoverLinkStore";
 import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
-import AlertBox from "../helper/notification";
+import {
+  CopyNotificationElement,
+  AlertBoxElement,
+} from "../helper/Notification.jsx";
 export default function ExtractLinks() {
   const {
     links,
@@ -11,13 +14,22 @@ export default function ExtractLinks() {
     requestTabId,
     setRequestTabId,
   } = useHoverLinkStore();
-  const { copyToClipboard, handleFindOnPage } = useHelperFunctionStore();
+
   const [isFetching, setIsFetching] = useState(false);
-  const [copied, setCopied] = useState(null);
+
   const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
   const tabMismatch =
     requestTabId && currentTabId && requestTabId !== currentTabId;
-
+  const [copiedUniqueClass, setCopiedUniqueClass] = useState("");
+  const { copyToClipboard, handleFindOnPage } = useHelperFunctionStore();
+  const [copied, setCopied] = useState(false);
+  const handleCopy = (hrefLink, uniqueClass) => {
+    copyToClipboard(hrefLink);
+    setCopied(true);
+    setCopiedUniqueClass(uniqueClass);
+    // Hide message after 1.5 seconds
+    setTimeout(() => setCopied(false), 1500);
+  };
   // 🔹 Listen for LINKS_FOUND from content script
   useEffect(() => {
     const handleMessage = (message) => {
@@ -126,16 +138,6 @@ export default function ExtractLinks() {
     setIsFetching(false);
   };
 
-  const handleCopy = async (href) => {
-    try {
-      await navigator.clipboard.writeText(href);
-      setCopied(href);
-      setTimeout(() => setCopied(null), 1500);
-    } catch (err) {
-      console.error("Failed to copy:", err);
-    }
-  };
-
   return (
     <div className="p-3">
       <div className="flex gap-2 mb-4 flex-col mx-2">
@@ -156,7 +158,7 @@ export default function ExtractLinks() {
         )}
       </div>
       {tabMismatch && (
-        <AlertBox
+        <AlertBoxElement
           message={
             <>
               <span className="font-medium">Warning alert!</span> ⚠️ Looks like
@@ -188,10 +190,13 @@ export default function ExtractLinks() {
                 </button>
 
                 <button
-                  onClick={() => copyToClipboard(link.href)}
+                  onClick={() => handleCopy(link.href, link.uniqueClass)}
                   className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer"
                 >
-                  {copied === link.href ? "Copied!" : "Copy link"}
+                  Copy link
+                  {copiedUniqueClass === link.uniqueClass && copied && (
+                    <CopyNotificationElement />
+                  )}
                 </button>
               </div>
 

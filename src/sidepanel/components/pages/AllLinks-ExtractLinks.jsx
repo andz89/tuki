@@ -1,7 +1,12 @@
 import { use, useEffect, useState } from "react";
 import { useExtractLinksStore } from "../../store/useExtractLinksStore";
-import AlertBox from "../helper/notification";
+// import AlertBox from "../helper/notification";
 import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
+import {
+  CopyNotificationElement,
+  AlertBoxElement,
+} from "../helper/Notification.jsx";
+
 export default function LinksPanel() {
   // const [links, setLinks] = useState([]);
 
@@ -16,11 +21,22 @@ export default function LinksPanel() {
     fetchLinks,
     setRequestTabId,
   } = useExtractLinksStore();
+  const [copiedUniqueClass, setCopiedUniqueClass] = useState("");
   const { copyToClipboard, handleFindOnPage } = useHelperFunctionStore();
+  const [copied, setCopied] = useState(false);
+  const handleCopy = (hrefLink, uniqueClass) => {
+    copyToClipboard(hrefLink);
+    setCopied(true);
+    setCopiedUniqueClass(uniqueClass);
+    // Hide message after 1.5 seconds
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   // ************************* get current tab id on load & tab switch *****************************//
   const [loading, setLoading] = useState(false);
   const [currentTabId, setCurrentTabId] = useState(null); // ✅ track active tab id
   const [linkStatuses, setLinkStatuses] = useState({}); // store status per uniqueClass
+
   const tabMismatch = tabId && currentTabId && tabId !== currentTabId;
   const updateCurrentTab = async () => {
     const [tab] = await chrome.tabs.query({
@@ -83,7 +99,7 @@ export default function LinksPanel() {
         </span>
       </div>
       {tabMismatch && (
-        <AlertBox
+        <AlertBoxElement
           message={
             <>
               <span className="font-medium">Warning alert!</span> ⚠️ Looks like
@@ -118,16 +134,19 @@ export default function LinksPanel() {
                 </button>
 
                 <button
-                  onClick={() => copyToClipboard(link.href)}
+                  onClick={() => handleCopy(link.href, link.uniqueClass)}
                   className="rounded border border-yellow-700 text-xs font-semibold hover:bg-slate-200 py-1 px-2 text-slate-700 cursor-pointer no-highlight"
                 >
                   Copy link
+                  {copiedUniqueClass === link.uniqueClass && copied && (
+                    <CopyNotificationElement />
+                  )}
                 </button>
               </div>
 
               <div>
                 {linkStatuses[link.uniqueClass] === "hidden" && (
-                  <AlertBox
+                  <AlertBoxElement
                     message={` This link is hidden on the page and cannot be displayed. Link ID: 
                     ${link.uniqueClass}`}
                     type="warning"

@@ -1,6 +1,9 @@
 // src/components/pages/PageInfo.jsx
 import React, { useEffect, useState } from "react";
-import AlertBox from "../helper/notification";
+import {
+  CopyNotificationElement,
+  AlertBoxElement,
+} from "../helper/Notification.jsx";
 export default function FeaturedImages() {
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
@@ -52,14 +55,14 @@ export default function FeaturedImages() {
   return (
     <div>
       {error && (
-        <AlertBox
+        <AlertBoxElement
           message={<>Oops! Something went wrong. Please refresh the page.</>}
           type="error"
         />
       )}
 
       {images.length === 0 && !error ? (
-        <AlertBox
+        <AlertBoxElement
           message={<>No featuredImages found on this page.</>}
           type="info"
         />

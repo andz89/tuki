@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 
-export default function AlertBox({ message, type = "info", duration }) {
+export const CopyNotificationElement = () => {
+  return (
+    <span className="absolute translate-x-[25%] -translate-y-[40%] text-[12px] text-white bg-slate-800 p-1 rounded">
+      Copied!
+    </span>
+  );
+};
+
+export const AlertBoxElement = ({ message, type = "info", duration }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -30,4 +38,4 @@ export default function AlertBox({ message, type = "info", duration }) {
   return (
     <div className={`${styles.base} ${styles.types[type]}`}>{message}</div>
   );
-}
+};

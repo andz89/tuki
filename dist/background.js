@@ -1,19 +1,18 @@
+//config background script to open side panel on extension icon click
 chrome.action.onClicked.addListener(async (tab) => {
   // When the extension icon is clicked, open the side panel
   await chrome.sidePanel.open({ tabId: tab.id });
 });
 // background.js
-// chrome.tabs.onActivated.addListener((activeInfo) => {
-//   chrome.runtime.sendMessage({ action: "tabChanged", tabId: activeInfo.tabId });
-// });
-chrome.tabs.onActivated.addListener(async (activeInfo) => {
-  const tabId = activeInfo.tabId;
-
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "tabChanged") {
+    console.log("Tab changed:", message.tabId);
+  }
+});
+chrome.tabs.onActivated.addListener(async ({ tabId }) => {
   try {
-    // Step 1: Try to ping the content script
     chrome.tabs.sendMessage(tabId, { type: "ping" }, async (response) => {
       if (chrome.runtime.lastError || !response) {
-        // ❌ No response → content.js not loaded → inject it
         console.log("Injecting content.js into new tab...");
 
         try {
@@ -23,19 +22,19 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
           });
         } catch (e) {
           console.warn("Cannot inject into tab:", e.message);
-          return;
+          return; // Stop here if inject failed
         }
       } else {
-        console.log("✅ content.js already active on this tab.");
+        console.log("content.js already active on this tab.");
       }
 
-      // Step 2: notify popup (or others) about tab change
-      chrome.runtime.sendMessage({ action: "tabChanged" });
+      chrome.runtime.sendMessage({ action: "tabChanged", tabId });
     });
   } catch (e) {
     console.warn("Tab activation error:", e.message);
   }
 });
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if (changeInfo.status === "complete") {
     try {

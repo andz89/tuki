@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import AlertBox from "../helper/notification";
+
+import {
+  CopyNotificationElement,
+  AlertBoxElement,
+} from "../helper/Notification.jsx";
 export default function CustomTags() {
   const [hyvorTag, setHyvorTag] = useState(null);
   const [error, setError] = useState("");
@@ -54,7 +58,7 @@ export default function CustomTags() {
 
   // 🧩 Render
   if (error) {
-    <AlertBox
+    <AlertBoxElement
       message={<>Oops! Something went wrong. Please refresh the page.</>}
       type="error"
     />;
@@ -62,7 +66,7 @@ export default function CustomTags() {
 
   if (!hyvorTag) {
     return (
-      <AlertBox
+      <AlertBoxElement
         message={<>No hyvor talk comments element found.</>}
         type="info"
       />
