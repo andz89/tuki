@@ -1,4 +1,5 @@
 //config background script to open side panel on extension icon click
+
 chrome.action.onClicked.addListener(async (tab) => {
   // When the extension icon is clicked, open the side panel
   await chrome.sidePanel.open({ tabId: tab.id });
@@ -83,5 +84,39 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })();
 
     return true;
+  }
+});
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === "EXTRACT_PAGE_INFO" && message.url) {
+    (async () => {
+      try {
+        const res = await fetch(message.url, { credentials: "omit" });
+        if (!res.ok) {
+          sendResponse({
+            ok: false,
+            status: res.status,
+            statusText: res.statusText,
+          });
+          return;
+        }
+
+        const html = await res.text();
+
+        // Send the raw HTML to the content script for parsing
+        // Use chrome.tabs.sendMessage if you want it parsed in the active tab
+        const [tab] = await chrome.tabs.query({
+          active: true,
+          currentWindow: true,
+        });
+        chrome.tabs.sendMessage(tab.id, { type: "PARSE_HTML", html });
+
+        // Optional: also respond to the sender that fetch succeeded
+        sendResponse({ ok: true, message: "HTML sent to content script" });
+      } catch (err) {
+        sendResponse({ ok: false, error: err.message });
+      }
+    })();
+
+    return true; // keep messaging channel open
   }
 });

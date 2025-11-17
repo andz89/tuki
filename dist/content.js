@@ -137,8 +137,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     displayLink(targetHref); // Use it however you need
   }
 
-  if (message.type === "selectElementAndExtractLinks") {
-    selectElementAndExtractLinks();
+  if (message.type === "startHovering") {
+    startHovering();
   }
   if (message.type === "stopHoveringLink") {
     document.removeEventListener("mouseover", mouseOver);
@@ -164,6 +164,9 @@ function displayLink(targetHref, retries = 5, delay = 300) {
       el.style.position = "";
     });
     document.querySelectorAll(".zigzag-popup").forEach((el) => el.remove());
+    document
+      .querySelectorAll(".zigzag-popup-with-parent")
+      .forEach((el) => el.remove());
 
     if (matchingLinks.length === 0) {
       if (remainingRetries > 0) {
@@ -201,22 +204,37 @@ function displayLink(targetHref, retries = 5, delay = 300) {
     if (getComputedStyle(link).position === "static") {
       link.style.position = "relative";
     }
+    const hasSiblings = link.parentNode.children.length > 1;
 
-    // Create popup
-    const popup = document.createElement("div");
-    popup.className = "zigzag-popup";
-    popup.textContent = "Here’s the link";
-    link.appendChild(popup);
+    if (hasSiblings) {
+      // Create popup as a sibling
+      const popup = document.createElement("div");
+      popup.className = "zigzag-popup";
+      popup.textContent = "Here’s the link";
 
-    // Adjust popup position if offscreen
-    const popupRect = popup.getBoundingClientRect();
-    if (popupRect.right > window.innerWidth) {
-      popup.style.left = `${
-        window.innerWidth - popupRect.width - rect.left - 10
-      }px`;
-    }
-    if (popupRect.bottom > window.innerHeight) {
-      popup.style.top = `-${popupRect.height + 4}px`;
+      // Insert after the link
+      link.appendChild(popup);
+
+      // Get link position
+
+      const popupRect = popup.getBoundingClientRect();
+
+      // Adjust position if offscreen
+      if (popupRect.right > window.innerWidth) {
+        popup.style.left = `${window.innerWidth - popupRect.width - 10}px`;
+      }
+      if (popupRect.bottom > window.innerHeight) {
+        popup.style.top = `${rect.top - popupRect.height - 4}px`;
+      }
+    } else {
+      // Wrap link with popup
+      const popup = document.createElement("div");
+      popup.className = "zigzag-popup-with-parent";
+      popup.textContent = "Here’s the link";
+      link.parentElement.appendChild(popup);
+
+      popup.left = +"45";
+      link.parentElement.className += " zigzag-highlight";
     }
 
     chrome.runtime.sendMessage({
@@ -244,6 +262,20 @@ function displayLink(targetHref, retries = 5, delay = 300) {
           left: -45px;
           margin-top: 4px;
         }
+        .zigzag-popup-with-parent {
+          position: absolute;
+          background: rgb(252, 198, 0);
+          color: black;
+          padding: 4px 8px;
+         
+          font-size: 12px;
+          z-index: 99999;
+          white-space: nowrap;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+          top: 100%;
+          left: 50%;
+          margin-top: 4px;
+        }
         .zigzag-highlight {
           border: 3px dashed red;
           animation: pulse-border 1s infinite;
@@ -263,7 +295,7 @@ function displayLink(targetHref, retries = 5, delay = 300) {
   attemptFind(retries);
 }
 var lastHighlighted;
-function selectElementAndExtractLinks() {
+function startHovering() {
   if (!document.querySelector("#custom-style")) {
     custom_style();
   }
@@ -399,6 +431,90 @@ function removeCreatedCustomSyleAndElement() {
     el.classList.remove("zigzag-highlight");
   });
   document.querySelectorAll(".zigzag-popup").forEach((el) => el.remove());
-  // var custom_pupop = document.getElementById("custom-pupop");
+  var custom_pupop = document.getElementById("custom-pupop");
   if (custom_pupop) custom_pupop.remove();
+}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  test();
+  if (message?.type === "PARSE_HTML" && message.html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(message.html, "text/html");
+
+    const title = doc.querySelector("title")?.textContent || null;
+    const description =
+      doc.querySelector('meta[name="description"]')?.content || null;
+    const canonical = doc.querySelector('link[rel="canonical"]')?.href || null;
+    const ogImage =
+      doc.querySelector('meta[property="og:image"]')?.content || null;
+    const twitterImage =
+      doc.querySelector('meta[name="twitter:image"]')?.content || null;
+    const pageId =
+      doc.querySelector("hyvor-talk-comments")?.getAttribute("page-id") || null;
+
+    const featuredImages = { og: ogImage, twitter: twitterImage };
+
+    // console.log("Extracted Page Info:", {
+    //   title,
+    //   description,
+    //   canonical,
+    //   featuredImages,
+    //   pageId,
+    // });
+    var data = {
+      title,
+      description,
+      canonical,
+      featuredImages,
+      pageId,
+    };
+    chrome.runtime.sendMessage({ type: "extract-data", data });
+    // sendResponse({
+    //   ok: true,
+    //   title,
+    //   description,
+    //   canonical,
+    //   featuredImages,
+    //   pageId,
+    // });
+  }
+});
+
+function test() {
+  // Add listeners once
+  if (!document.querySelector("#custom-style")) custom_style();
+  if (!document.querySelector("#custom-overlay")) custom_overlay();
+
+  document.addEventListener("mouseover", mouseOver);
+  document.addEventListener("mouseout", mouseOut);
+  document.addEventListener("mouseover", mouseOverGetURL);
+  function mouseOverGetURL(e) {
+    const link = e.target.closest("a");
+    if (link) {
+      chrome.runtime.sendMessage({ type: "extract-url", link: link.href });
+    }
+  }
+  function handleClick(e) {
+    const link = e.target.closest("a");
+    if (link) {
+      chrome.runtime.sendMessage({ type: "extract-url", link: link.href });
+      // Optional
+      e.preventDefault();
+      e.stopPropagation();
+      // Remove the click listener
+    }
+    removeCreatedCustomSyleAndElement();
+
+    document.removeEventListener("click", handleClick, true);
+    // Remove other listeners
+    document.removeEventListener("mouseover", mouseOver);
+    document.removeEventListener("mouseover", mouseOverGetURL);
+
+    document.removeEventListener("mouseout", mouseOut);
+  }
+
+  document.addEventListener("click", handleClick, true);
+  function startHoveringAndExtractingOneLink(link) {
+    // Logic for highlighting or creating popup for this link
+  }
 }
