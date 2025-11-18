@@ -1,12 +1,11 @@
 import { use, useEffect, useState } from "react";
-import { useBrokenLinksStore } from "../../store/useBrokenLinksStore";
-import { useNavigate } from "react-router-dom";
-import AlertBox from "../helper/notification";
-import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
+import { useBrokenLinksStore } from "../../store/useBrokenLinksStore.jsx";
+
+import { useHelperFunctionStore } from "../../store/useHelperFunctionStore.jsx";
 import {
   CopyNotificationElement,
   AlertBoxElement,
-} from "../helper/Notification.jsx";
+} from "../../components/UI/Notification.jsx";
 export default function BrokenLinksPanel() {
   const {
     brokenLinks,

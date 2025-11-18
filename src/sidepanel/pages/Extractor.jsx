@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 
 const Extractor = () => {
+  const [isChecked, setIsChecked] = useState(false);
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
   const [extractedData, setExtractedData] = useState({
     title: null,
     description: null,
@@ -12,6 +14,37 @@ const Extractor = () => {
     totalReacts: null,
     featuredImages: { og: null, twitter: null },
   });
+
+  const handleChange = (e) => {
+    const checked = e.target.checked;
+    setIsChecked(checked);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0];
+      if (!tab?.id) return;
+
+      chrome.tabs.sendMessage(
+        tab.id,
+        { type: "HoverMode_ExtractingPageInfo_Start", isChecked: checked },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.error(
+              "Cannot access this page’s info:",
+              chrome.runtime.lastError
+            );
+            return;
+          }
+
+          if (!response) {
+            console.warn("No response from content script.");
+            return;
+          }
+
+          console.log("Content script response:", response);
+        }
+      );
+    });
+  };
 
   const extractPageInfo = () => {
     if (!url) {
@@ -41,6 +74,7 @@ const Extractor = () => {
       }
     );
   };
+
   useEffect(() => {
     function handleMessageData(message, sender, sendResponse) {
       if (message.type === "extract-data") {
@@ -79,13 +113,29 @@ const Extractor = () => {
         placeholder="Enter page URL"
         className="border px-2 py-1 rounded w-full mb-2"
       />
-      <button
-        onClick={extractPageInfo}
-        disabled={loading}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        {loading ? "Extracting..." : "Extract Page Info"}
-      </button>
+      <div className="flex items-center justify-between gap-2">
+        <button
+          onClick={extractPageInfo}
+          disabled={loading}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          {loading ? "Extracting..." : "Extract Page Info"}
+        </button>
+        <div>
+          <label
+            className={`${
+              isChecked ? "bg-blue-600" : "bg-gray-600"
+            } p-1 rounded text-white select-none`}
+          >
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={handleChange}
+            />
+            <span className="pl-1 select-none"> Hover Mode</span>
+          </label>
+        </div>
+      </div>
 
       {error && <p className="mt-2 text-red-600">{error}</p>}
 

@@ -148,6 +148,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     removeCreatedCustomSyleAndElement();
     chrome.runtime.sendMessage({ type: "HOVERING_STOP" });
   }
+  if (message.type === "HoverMode_ExtractingPageInfo_Start") {
+    if (message.isChecked === true) {
+      HoverMode_ExtractingPageInfo_Start();
+    } else {
+      HoverMode_ExtractingPageInfo_Off();
+    }
+  }
   return true; // keep message channel open for async if needed
 });
 
@@ -436,7 +443,6 @@ function removeCreatedCustomSyleAndElement() {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  test();
   if (message?.type === "PARSE_HTML" && message.html) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(message.html, "text/html");
@@ -479,42 +485,64 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // });
   }
 });
+function HoverMode_ExtractingPageInfo_Off() {
+  // Remove listeners
+  removeCreatedCustomSyleAndElement();
+  document.getElementById("custom-pupop_link")?.remove();
+  document.removeEventListener("mouseout", mouseOverGetURL);
 
-function test() {
-  // Add listeners once
-  if (!document.querySelector("#custom-style")) custom_style();
-  if (!document.querySelector("#custom-overlay")) custom_overlay();
+  document.removeEventListener(
+    "click",
+    HoverMode_ExtractingPageInfo_HandleClick,
+    true
+  );
+}
+function popup_link() {
+  const popup_link = document.createElement("div");
 
-  document.addEventListener("mouseover", mouseOver);
-  document.addEventListener("mouseout", mouseOut);
+  popup_link.id = "custom-pupop_link";
+  popup_link.style.position = "fixed";
+  popup_link.style.bottom = "2px";
+  popup_link.style.right = "2px";
+  popup_link.style.display = "none";
+  popup_link.style.backgroundColor = "yellow";
+  popup_link.style.padding = "2px 5px";
+  popup_link.style.zIndex = "1000000";
+  popup_link.style.fontSize = "12px";
+  document.body.appendChild(popup_link);
+}
+function HoverMode_ExtractingPageInfo_Start() {
+  if (!document.getElementById("custom-pupop_link")) {
+    popup_link();
+  }
+
   document.addEventListener("mouseover", mouseOverGetURL);
-  function mouseOverGetURL(e) {
-    const link = e.target.closest("a");
-    if (link) {
-      chrome.runtime.sendMessage({ type: "extract-url", link: link.href });
-    }
+
+  document.addEventListener(
+    "click",
+    HoverMode_ExtractingPageInfo_HandleClick,
+    true
+  );
+}
+
+function mouseOverGetURL(e) {
+  if (e.target.tagName === "A") {
+    const popup = document.getElementById("custom-pupop_link");
+    // popup.textContent = e.target.href
+    popup.textContent = "Link detected. Click to extract.";
+    popup.style.display = "block";
+  } else {
+    const popup = document.getElementById("custom-pupop_link");
+    popup.style.display = "none";
   }
-  function handleClick(e) {
-    const link = e.target.closest("a");
-    if (link) {
-      chrome.runtime.sendMessage({ type: "extract-url", link: link.href });
-      // Optional
-      e.preventDefault();
-      e.stopPropagation();
-      // Remove the click listener
-    }
-    removeCreatedCustomSyleAndElement();
-
-    document.removeEventListener("click", handleClick, true);
-    // Remove other listeners
-    document.removeEventListener("mouseover", mouseOver);
-    document.removeEventListener("mouseover", mouseOverGetURL);
-
-    document.removeEventListener("mouseout", mouseOut);
-  }
-
-  document.addEventListener("click", handleClick, true);
-  function startHoveringAndExtractingOneLink(link) {
-    // Logic for highlighting or creating popup for this link
+}
+function HoverMode_ExtractingPageInfo_HandleClick(e) {
+  const link = e.target.closest("a");
+  if (link) {
+    chrome.runtime.sendMessage({ type: "extract-url", link: link.href });
+    // Optional
+    e.preventDefault();
+    e.stopPropagation();
+    // Remove the click listener
   }
 }

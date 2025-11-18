@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   CopyNotificationElement,
   AlertBoxElement,
-} from "../helper/Notification.jsx";
+} from "../components/UI/Notification.jsx";
 export default function FeaturedImages() {
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");

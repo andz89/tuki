@@ -4,8 +4,8 @@ import { HTMLHint } from "htmlhint";
 import {
   CopyNotificationElement,
   AlertBoxElement,
-} from "../helper/Notification.jsx";
-import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
+} from "../../components/UI/Notification.jsx";
+import { useHelperFunctionStore } from "../../store/useHelperFunctionStore.jsx";
 const commonTags = [
   "div",
   "span",

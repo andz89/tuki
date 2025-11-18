@@ -1,11 +1,11 @@
 import { use, useEffect, useState } from "react";
-import { useExtractLinksStore } from "../../store/useExtractLinksStore";
+import { useExtractLinksStore } from "../../store/useExtractLinksStore.jsx";
 // import AlertBox from "../helper/notification";
-import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
+import { useHelperFunctionStore } from "../../store/useHelperFunctionStore.jsx";
 import {
   CopyNotificationElement,
   AlertBoxElement,
-} from "../helper/Notification.jsx";
+} from "../../components/UI/Notification.jsx";
 
 export default function LinksPanel() {
   // const [links, setLinks] = useState([]);

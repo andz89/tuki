@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useHoverLinkStore } from "../../store/useHoverLinkStore";
-import { useHelperFunctionStore } from "../../store/useHelperFunctionStore";
+import { useHoverLinkStore } from "../../store/useHoverLinkStore.jsx";
+import { useHelperFunctionStore } from "../../store/useHelperFunctionStore.jsx";
 import {
   CopyNotificationElement,
   AlertBoxElement,
-} from "../helper/Notification.jsx";
+} from "../../components/UI/Notification.jsx";
 export default function ExtractLinks() {
   const {
     links,
@@ -103,21 +103,17 @@ export default function ExtractLinks() {
 
       setRequestTabId(tab.id); // ✅ store tab ID
 
-      chrome.tabs.sendMessage(
-        tab.id,
-        { type: "selectElementAndExtractLinks" },
-        (response) => {
-          if (chrome.runtime.lastError) {
-            console.warn(
-              "Failed to send message:",
-              chrome.runtime.lastError.message
-            );
-            setError("Failed to communicate with the content script.");
-          } else {
-            console.log("Extraction executed:", response?.data);
-          }
+      chrome.tabs.sendMessage(tab.id, { type: "startHovering" }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn(
+            "Failed to send message:",
+            chrome.runtime.lastError.message
+          );
+          setError("Failed to communicate with the content script.");
+        } else {
+          console.log("Extraction executed:", response?.data);
         }
-      );
+      });
     } catch (err) {
       setError("An error occurred while extracting links.");
     }

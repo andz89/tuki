@@ -3,21 +3,21 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 
-import Header from "./components/headers/header.jsx";
-import PageInfo from "./components/pages/pageInfo.jsx";
-import AllLinksExtractLinks from "./components/pages/AllLinks-ExtractLinks.jsx";
+import Header from "./components/layout/header/Main_header.jsx";
+import PageInfo from "./pages/pageInfo.jsx";
+import Links from "./pages/links/Links.jsx";
 
-import BrokenLinks from "./components/pages/BrokenLinks.jsx";
-import LinksHeader from "./components/headers/LinkHeader.jsx";
-import HoverLinks from "./components/pages/HoverLinks.jsx";
-import PageChangeWatcher from "./components/helper/PageChangeWatcher.jsx";
-import GlobalTextHighlighter from "./components/helper/GlobalTextHighlighter.jsx";
-import InputSearch from "./components/helper/inputSearch.jsx";
-import Html from "./components/pages/Html.jsx";
-import HTML_header from "./components/headers/HTML_header.jsx";
-import Input_tags from "./components/pages/Input_tags.jsx";
-import CreateTag from "./components/pages/CreateTag.jsx";
-import Extractor from "./components/pages/Extractor.jsx";
+import BrokenLinks from "./pages/links/BrokenLinks.jsx";
+import LinksHeader from "./components/layout/header/Links_header.jsx";
+import HoverLinks from "./pages/links/HoverLinks.jsx";
+import PageChangeWatcher from "./hooks/PageChangeWatcher.jsx";
+import GlobalTextHighlighter from "./hooks/GlobalTextHighlighter.jsx";
+import InputSearch from "./components/UI/InputSearch.jsx";
+import Html from "./pages/html/Html.jsx";
+import HTML_header from "./components/layout/header/HTML_header.jsx";
+import Input_tags from "./pages/Input_tags.jsx";
+import CreateTag from "./pages/html/CreateTag.jsx";
+import Extractor from "./pages/Extractor.jsx";
 function InnerApp() {
   const [isInjected, setIsInjected] = useState(false);
   const handlePageChange = (path) => {
@@ -90,12 +90,12 @@ function InnerApp() {
       <div id="pages">
         <Routes>
           <Route path="/" element={<PageInfo />} />
-          <Route path="/links" element={<AllLinksExtractLinks />} />
+          <Route path="/links" element={<Links />} />
           <Route path="/broken-links" element={<BrokenLinks />} />
           <Route path="/target-section" element={<HoverLinks />} />
           <Route path="/html" element={<Html />} />
           <Route path="/Extractor" element={<Extractor />} />
-          {/* <Route path="/input-tags" element={<Input_tags />} /> */}
+
           <Route path="/create-tag" element={<CreateTag />} />
         </Routes>
       </div>

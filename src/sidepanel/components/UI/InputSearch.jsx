@@ -1,4 +1,4 @@
-import useMarkText from "./GlobalTextHighlighter.jsx";
+import useMarkText from "../../hooks/GlobalTextHighlighter.jsx";
 
 export default function InputSearch() {
   useMarkText(); // automatically applies highlighting

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   CopyNotificationElement,
   AlertBoxElement,
-} from "../helper/Notification.jsx";
+} from "../components/UI/Notification.jsx";
 export default function ModuleCategory() {
   const [elements, setElements] = useState([]);
   const [error, setError] = useState(null);
