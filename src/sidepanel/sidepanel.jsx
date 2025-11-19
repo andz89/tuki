@@ -9,7 +9,7 @@ import Links from "./pages/links/Links.jsx";
 
 import BrokenLinks from "./pages/links/BrokenLinks.jsx";
 import LinksHeader from "./components/layout/header/Links_header.jsx";
-import HoverLinks from "./pages/links/HoverLinks.jsx";
+import LinkInspector from "./pages/links/LinkInspector.jsx";
 import PageChangeWatcher from "./hooks/PageChangeWatcher.jsx";
 import GlobalTextHighlighter from "./hooks/GlobalTextHighlighter.jsx";
 import InputSearch from "./components/UI/InputSearch.jsx";
@@ -65,11 +65,9 @@ function InnerApp() {
   const showLinksHeader = [
     "/links",
     "/broken-links",
-    "/target-section",
+    "/link-inspector",
   ].includes(location.pathname);
-  const showHTMLHeader = ["/html", "/input-tags", "/create-tag"].includes(
-    location.pathname
-  );
+  const showHTMLHeader = ["/html", "/create-tag"].includes(location.pathname);
   const hideInput = ["/input-tags", "/html", "/create-tag"].includes(
     location.pathname
   );
@@ -92,7 +90,7 @@ function InnerApp() {
           <Route path="/" element={<PageInfo />} />
           <Route path="/links" element={<Links />} />
           <Route path="/broken-links" element={<BrokenLinks />} />
-          <Route path="/target-section" element={<HoverLinks />} />
+          <Route path="/link-inspector" element={<LinkInspector />} />
           <Route path="/html" element={<Html />} />
           <Route path="/Extractor" element={<Extractor />} />
 

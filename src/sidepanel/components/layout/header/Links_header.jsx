@@ -36,7 +36,7 @@ const LinkHeader = () => {
         </li>
         <li className="">
           <NavLink
-            to="/target-section"
+            to="/link-inspector"
             aria-current="page"
             className={({ isActive }) =>
               `inline-block p-2       ${
@@ -46,7 +46,7 @@ const LinkHeader = () => {
               }`
             }
           >
-            Hover Mode
+            Link Inspector
           </NavLink>
         </li>
       </ul>

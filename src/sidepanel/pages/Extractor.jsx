@@ -84,11 +84,11 @@ const Extractor = () => {
           title: data.title || "-",
           description: data.description || "-",
           canonical: data.canonical || "-",
-          pageId: data.pageId || "-",
-          totalReacts: data.totalReacts || "-", // if you include it later
+          pageId: data.pageId || "Not Found",
+          totalReacts: data.totalReacts || "Not Found", // if you include it later
           featuredImages: {
-            og: data.featuredImages?.og || "-",
-            twitter: data.featuredImages?.twitter || "-",
+            og: data.featuredImages?.og || null,
+            twitter: data.featuredImages?.twitter || null,
           },
         });
       }
@@ -140,7 +140,7 @@ const Extractor = () => {
       {error && <p className="mt-2 text-red-600">{error}</p>}
 
       {extractedData && (
-        <div className="mt-3 border p-2 rounded bg-gray-100">
+        <div className="mt-3 border p-2 rounded  ">
           <p>
             <strong>Title:</strong> {extractedData.title}
           </p>
@@ -150,9 +150,9 @@ const Extractor = () => {
           <p>
             <strong>Canonical:</strong> {extractedData.canonical}
           </p>
-          <p>
+          {/* <p>
             <strong>Hyvor Page ID:</strong> {extractedData.pageId}
-          </p>
+          </p> */}
           <p>
             <strong>Number of Reacts:</strong> {extractedData.totalReacts}
           </p>
@@ -161,12 +161,21 @@ const Extractor = () => {
           </p>
           <ul className="ml-4 list-disc">
             <li>
-              <strong>OG:</strong>{" "}
-              <img src={extractedData.featuredImages?.og} alt="OG image" />
+              <strong>OG:</strong>
+              {extractedData.featuredImages.og ? (
+                <img src={extractedData.featuredImages.og} alt="OG image" />
+              ) : (
+                ""
+              )}
             </li>
             <li>
               <strong>Twitter:</strong>
-              <img src={extractedData.featuredImages?.twitter} />
+              {console.log(extractedData.featuredImages.twitter)}
+              {extractedData.featuredImages.twitter !== null ? (
+                <img src={extractedData.featuredImages.twitter} />
+              ) : (
+                ""
+              )}
             </li>
           </ul>
         </div>
