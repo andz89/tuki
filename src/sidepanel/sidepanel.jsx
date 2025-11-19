@@ -92,9 +92,8 @@ function InnerApp() {
           <Route path="/broken-links" element={<BrokenLinks />} />
           <Route path="/link-inspector" element={<LinkInspector />} />
           <Route path="/html" element={<Html />} />
-          <Route path="/Extractor" element={<Extractor />} />
-
           <Route path="/create-tag" element={<CreateTag />} />
+          <Route path="/extractor" element={<Extractor />} />
         </Routes>
       </div>
     </div>

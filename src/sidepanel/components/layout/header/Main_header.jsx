@@ -6,7 +6,7 @@ const header = () => {
   const isLinksActive = ["/links", "/broken-links", "/target-section"].includes(
     location.pathname
   );
-  const isHTMLActive = ["/html", "/input-tags"].includes(location.pathname);
+  const isHTMLActive = ["/html", "/create-tag"].includes(location.pathname);
   return (
     <div className="bg-white">
       <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
@@ -55,10 +55,10 @@ const header = () => {
         </li>
         <li className="">
           <NavLink
-            to="/Extractor"
-            className={({}) =>
+            to="/extractor"
+            className={({ isActive }) =>
               `inline-block p-2   rounded-t-lg    ${
-                isHTMLActive
+                isActive
                   ? "text-yellow-500 bg-gray-100 dark:bg-gray-800 dark:text-blue-500"
                   : "inline-block p-2 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300"
               }`
