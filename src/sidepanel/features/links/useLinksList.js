@@ -1,9 +1,9 @@
 // src/hooks/useLinksList.js
 import { useEffect, useState } from "react";
 import { useExtractLinksStore } from "../../store/useExtractLinksStore.jsx";
-import { useHelperFunctionStore } from "../../store/useHelperFunctionStore.jsx";
-import { fetchLinksFromTab } from "./linksListApi.js";
 
+import { handleFindOnPage, fetchLinksFromTab } from "./linksListApi.js";
+import { copyToClipboard } from "../../utils/clipboardUtils.js";
 export function useLinksList() {
   const {
     allLinks,
@@ -15,15 +15,14 @@ export function useLinksList() {
     setRequestTabId,
   } = useExtractLinksStore();
 
-  const { copyToClipboard, handleFindOnPage } = useHelperFunctionStore();
-
   const [loading, setLoading] = useState(false);
   const [currentTabId, setCurrentTabId] = useState(null);
   const [copied, setCopied] = useState(false);
   const [copiedUniqueClass, setCopiedUniqueClass] = useState("");
   const [linkStatuses, setLinkStatuses] = useState({});
 
-  const tabMismatch = tabId && currentTabId && tabId !== currentTabId;
+  const tabMismatch =
+    requestTabId && currentTabId && requestTabId !== currentTabId;
 
   const updateCurrentTab = async () => {
     const [tab] = await chrome.tabs.query({
@@ -38,6 +37,7 @@ export function useLinksList() {
     setLoading(true);
     try {
       const links = await fetchLinksFromTab(setTabId, setRequestTabId);
+
       setAllLinks(links);
     } catch (err) {
       console.error(err);
@@ -84,7 +84,6 @@ export function useLinksList() {
   return {
     allLinks,
     error,
-    requestTabId,
     loading,
     tabMismatch,
     copied,

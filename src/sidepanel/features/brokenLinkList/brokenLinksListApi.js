@@ -1,45 +1,53 @@
-export async function fetchAndCheckLinks() {
+// src/api/linksListApi.js
+export async function fetchLinksFromTab(setTabId, setRequestTabId) {
   try {
     const [tab] = await chrome.tabs.query({
       active: true,
       currentWindow: true,
     });
-    if (!tab?.id) return [];
 
-    const tabId = tab.id;
+    if (!tab?.id) {
+      console.warn("No active tab found.");
+      return [];
+    }
 
-    return await new Promise((resolve, reject) => {
+    const activeTabId = tab.id;
+
+    // Optional: store tabId if needed
+    setTabId(activeTabId);
+    setRequestTabId(activeTabId);
+
+    return new Promise((resolve, reject) => {
       chrome.tabs.sendMessage(
-        tabId,
+        activeTabId,
         { type: "extract-links" },
-        async (response) => {
+        (response) => {
           if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError.message);
             reject(new Error("Cannot access this page’s links."));
             return;
           }
 
-          if (!response?.data) resolve([]);
-          else {
-            const links = await Promise.all(
-              response.data.map(async (link) => {
-                if (link.href.startsWith("mailto:"))
-                  return { ...link, isBroken: false };
-                try {
-                  const res = await fetch(link.href, { method: "HEAD" });
-                  return { ...link, isBroken: !res.ok };
-                } catch {
-                  return { ...link, isBroken: true };
-                }
-              })
-            );
-            resolve(links);
+          if (!response) {
+            resolve([]);
+            return;
           }
+
+          resolve(response.data || []);
         }
       );
     });
   } catch (err) {
-    console.error("fetchAndCheckLinks error:", err);
+    console.error("Link fetch error:", err);
     return [];
   }
 }
+export const handleFindOnPage = async (uniqueClass) => {
+  await chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (!tabs[0]?.id) return;
+    chrome.tabs.sendMessage(tabs[0].id, {
+      type: "window-displayLink",
+      targetHref: uniqueClass,
+    });
+  });
+};

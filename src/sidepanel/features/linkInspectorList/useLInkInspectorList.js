@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { startHovering } from "./LinkInspectorListApi.js";
+import { startHovering, handleFindOnPage } from "./LinkInspectorListApi.js";
+
+import { copyToClipboard } from "../../utils/clipboardUtils.js";
 export function usePageLinksInspector() {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -7,6 +9,20 @@ export function usePageLinksInspector() {
   const [requestTabId, setRequestTabId] = useState(null);
   const [linkStatuses, setLinkStatuses] = useState({});
   const [isFetching, setIsFetching] = useState(false);
+
+  const [copiedUniqueClass, setCopiedUniqueClass] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const tabMismatch =
+    requestTabId && currentTabId && requestTabId !== currentTabId;
+
+  const handleCopy = (hrefLink, uniqueClass) => {
+    copyToClipboard(hrefLink);
+    setCopied(true);
+    setCopiedUniqueClass(uniqueClass);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   const updateCurrentTab = async () => {
     const [tab] = await chrome.tabs.query({
       active: true,
@@ -15,28 +31,13 @@ export function usePageLinksInspector() {
     if (tab?.id) setCurrentTabId(tab.id);
   };
 
-  const startHoveringButton = async () => {
+  const handleStartHovering = async () => {
     setLinks([]);
     setLoading(true);
     setIsFetching(true);
     await updateCurrentTab();
     setRequestTabId(currentTabId);
     await startHovering(currentTabId);
-    // try {
-    //   chrome.tabs.sendMessage(
-    //     currentTabId,
-    //     { type: "startHovering" },
-    //     (response) => {
-    //       if (chrome.runtime.lastError) {
-    //         console.warn("Failed to start hovering:", chrome.runtime.lastError);
-    //       } else {
-    //         console.log("Hovering started:", response?.data);
-    //       }
-    //     }
-    //   );
-    // } catch (err) {
-    //   console.error("Error starting hover:", err);
-    // }
   };
 
   const stopHovering = () => {
@@ -90,13 +91,19 @@ export function usePageLinksInspector() {
   }, []);
 
   return {
+    isFetching,
     links,
     linkStatuses,
     loading,
     requestTabId,
     currentTabId,
-    startHoveringButton,
+    copied,
+    copiedUniqueClass,
+    tabMismatch,
+    handleCopy,
+    handleStartHovering,
     stopHovering,
-    isFetching,
+    handleFindOnPage,
+    copyToClipboard,
   };
 }

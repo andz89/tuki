@@ -31,9 +31,9 @@ export const useBrokenLinksStore = create((set, get) => ({
 
       const activeTabId = tab.id;
 
-      // Optional: store tabId if needed
-      set({ tabId: activeTabId });
-      set({ requestTabId: activeTabId });
+      // // Optional: store tabId if needed
+      // set({ tabId: activeTabId });
+      // set({ requestTabId: activeTabId });
 
       // Wrap sendMessage in a promise to return data
       const links = await new Promise((resolve, reject) => {

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useBrokenLinksStore } from "../../store/useBrokenLinksStore.jsx";
-import { fetchAndCheckLinks } from "./brokenLinksListApi.js";
-
+import { fetchLinksFromTab, handleFindOnPage } from "./brokenLinksListApi.js";
+import { copyToClipboard } from "../../utils/clipboardUtils.js";
 export function useBrokenLinks() {
   const {
     brokenLinks,
+    setTabId,
     addBrokenLink,
     resetBrokenLinks,
-    fetchLinks,
     setRequestTabId,
     requestTabId,
   } = useBrokenLinksStore();
@@ -15,6 +15,15 @@ export function useBrokenLinks() {
   const [loading, setLoading] = useState(false);
   const [currentTabId, setCurrentTabId] = useState(null);
   const [linkStatuses, setLinkStatuses] = useState({});
+  const [copiedUniqueClass, setCopiedUniqueClass] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (hrefLink, uniqueClass) => {
+    copyToClipboard(hrefLink);
+    setCopied(true);
+    setCopiedUniqueClass(uniqueClass);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   const updateCurrentTab = async () => {
     const [tab] = await chrome.tabs.query({
@@ -23,6 +32,10 @@ export function useBrokenLinks() {
     });
     if (tab?.id) setCurrentTabId(tab.id);
   };
+
+  const tabMismatch =
+    requestTabId && currentTabId && requestTabId !== currentTabId;
+
   const processBrokenLinks = async (links = links) => {
     setLoading(true);
     resetBrokenLinks(); // clear previous broken links
@@ -57,7 +70,7 @@ export function useBrokenLinks() {
     setLoading(true);
     resetBrokenLinks();
     try {
-      const links = await fetchLinks();
+      const links = await fetchLinksFromTab(setTabId, setRequestTabId);
       processBrokenLinks(links);
     } finally {
     }
@@ -91,11 +104,13 @@ export function useBrokenLinks() {
   return {
     brokenLinks,
     loading,
-
+    handleCopy,
     requestTabId,
     getLinks,
     linkStatuses,
-
-    currentTabId,
+    copiedUniqueClass,
+    tabMismatch,
+    copied,
+    handleFindOnPage,
   };
 }

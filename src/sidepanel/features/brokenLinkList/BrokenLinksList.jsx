@@ -10,26 +10,13 @@ export default function BrokenLinksPanel() {
     brokenLinks,
     loading,
     requestTabId,
-    currentTabId,
+    copiedUniqueClass,
+    handleCopy,
+    handleFindOnPage,
+    tabMismatch,
     getLinks,
+    copied,
   } = useBrokenLinks();
-
-  const { handleFindOnPage, copyToClipboard } = useHelperFunctionStore();
-  const [copiedUniqueClass, setCopiedUniqueClass] = useState("");
-  const [copied, setCopied] = useState(false);
-  const tabMismatch =
-    requestTabId && currentTabId && requestTabId !== currentTabId;
-  useEffect(() => {
-    // Component did mount logic can go here if needed
-    console.log(currentTabId);
-    console.log(requestTabId);
-  }, [currentTabId]);
-  const handleCopy = (hrefLink, uniqueClass) => {
-    copyToClipboard(hrefLink);
-    setCopied(true);
-    setCopiedUniqueClass(uniqueClass);
-    setTimeout(() => setCopied(false), 1500);
-  };
 
   return (
     <div className="p-3">
