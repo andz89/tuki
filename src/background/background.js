@@ -4,10 +4,31 @@ chrome.action.onClicked.addListener(async (tab) => {
   // When the extension icon is clicked, open the side panel
   await chrome.sidePanel.open({ tabId: tab.id });
 });
-// background.js
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "tabChanged") {
-    console.log("Tab changed:", message.tabId);
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  if (changeInfo.status === "complete") {
+    try {
+      chrome.tabs.sendMessage(tabId, { type: "ping" }, async (response) => {
+        if (chrome.runtime.lastError || !response) {
+          console.log("Injecting content.js into reloaded tab...");
+          try {
+            await chrome.scripting.executeScript({
+              target: { tabId },
+              files: ["content.js"],
+            });
+          } catch (e) {
+            console.warn("Cannot inject into tab:", e.message);
+            return;
+          }
+        } else {
+          console.log("✅ content.js already active on this tab.");
+        }
+
+        chrome.runtime.sendMessage({ action: "tabReload" });
+      });
+    } catch (e) {
+      console.warn("Tab update error:", e.message);
+    }
   }
 });
 chrome.tabs.onActivated.addListener(async ({ tabId }) => {
@@ -36,34 +57,10 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
   }
 });
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-  if (changeInfo.status === "complete") {
-    try {
-      chrome.tabs.sendMessage(tabId, { type: "ping" }, async (response) => {
-        if (chrome.runtime.lastError || !response) {
-          console.log("Injecting content.js into reloaded tab...");
-          try {
-            await chrome.scripting.executeScript({
-              target: { tabId },
-              files: ["content.js"],
-            });
-          } catch (e) {
-            console.warn("Cannot inject into tab:", e.message);
-            return;
-          }
-        } else {
-          console.log("✅ content.js already active on this tab.");
-        }
-
-        chrome.runtime.sendMessage({ action: "tabReload" });
-      });
-    } catch (e) {
-      console.warn("Tab update error:", e.message);
-    }
-  }
-});
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "tabChanged") {
+    console.log("Tab changed:", message.tabId);
+  }
   if (message?.type === "FETCH_PAGE_HTML" && message.url) {
     (async () => {
       try {
@@ -85,8 +82,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     return true;
   }
-});
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === "EXTRACT_PAGE_INFO" && message.url) {
     (async () => {
       try {
@@ -119,14 +114,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     return true; // keep messaging channel open
   }
-});
-
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.type === "check_image_url") {
-    fetch(msg.url, { method: "HEAD" })
+  if (message.type === "check_image_url") {
+    fetch(message.url, { method: "HEAD" })
       .then((res) => {
         sendResponse({
-          url: msg.url,
+          url: message.url,
           ok: res.ok,
           status: res.status,
           contentType: res.headers.get("content-type") || null,
@@ -134,7 +126,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       })
       .catch(() => {
         sendResponse({
-          url: msg.url,
+          url: message.url,
           ok: false,
           status: "NETWORK_ERROR",
         });
@@ -142,9 +134,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     return true; // keeps message channel alive
   }
-});
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "check_links_head") {
     const links = message.links;
 

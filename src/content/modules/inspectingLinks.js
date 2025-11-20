@@ -120,6 +120,8 @@ export const removeCreatedCustomStyleAndElement = () => {
     el.classList.remove("zigzag-highlight");
   });
   document.querySelectorAll(".zigzag-popup").forEach((el) => el.remove());
-  var custom_pupop = document.getElementById("custom-pupop");
-  if (custom_pupop) custom_pupop.remove();
+
+  document
+    .querySelectorAll(".zigzag-popup-with-parent")
+    .forEach((el) => el.remove());
 };

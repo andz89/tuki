@@ -5,8 +5,8 @@ import { scanAllImages } from "./scanImagesApi.js";
 
 export const useScanImages = () => {
   const [loading, setLoading] = useState(false);
-  const setResults = useScanImagesStore((s) => s.setResults);
 
+  const { setResults } = useScanImagesStore();
   const scanImages = async () => {
     setLoading(true);
     setResults([]);

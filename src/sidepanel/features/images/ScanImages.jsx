@@ -6,8 +6,10 @@ import { copyToClipboard } from "../../utils/clipboardUtils.js";
 import { CopyNotificationElement } from "../../components/UI/Notification.jsx";
 
 export default function ScanImages() {
-  const results = useScanImagesStore((s) => s.results);
-  const brokenCount = useScanImagesStore((s) => s.brokenCount);
+  // const results = useScanImagesStore((s) => s.results);
+  // const brokenCount = useScanImagesStore((s) => s.brokenCount);
+
+  const { results, brokenCount } = useScanImagesStore();
   const { loading, scanImages } = useScanImages();
 
   const [copiedUniqueClass, setCopiedUniqueClass] = useState("");
@@ -68,8 +70,8 @@ export default function ScanImages() {
               </button>
               <div className="text-right">
                 <div>Status: {res.status}</div>
-                {!res.ok && <div className="text-red-700">❌ Broken Image</div>}
-                {res.ok && <div className="text-green-700">✔ OK</div>}
+                {!res.ok && <div className="text-red-700"> Broken Image</div>}
+                {res.ok && <div className="text-green-700"> OK</div>}
               </div>
             </div>
           </div>

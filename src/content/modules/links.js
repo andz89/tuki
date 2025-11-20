@@ -37,7 +37,7 @@ export const locateLinkOnPage = (targetHref, retries = 5, delay = 300) => {
       link.classList.contains(targetHref)
     );
 
-    // Remove old highlights and popups
+    // Remove existing highlights, popups, and zigzag-popup-with-parent elements before creating new ones
     document.querySelectorAll(".zigzag-highlight").forEach((el) => {
       el.classList.remove("zigzag-highlight");
       el.style.position = "";
@@ -46,6 +46,7 @@ export const locateLinkOnPage = (targetHref, retries = 5, delay = 300) => {
     document
       .querySelectorAll(".zigzag-popup-with-parent")
       .forEach((el) => el.remove());
+    //---------------
 
     if (matchingLinks.length === 0) {
       if (remainingRetries > 0) {
@@ -77,8 +78,6 @@ export const locateLinkOnPage = (targetHref, retries = 5, delay = 300) => {
 
     // Scroll into view
     link.scrollIntoView({ behavior: "smooth", block: "center" });
-
-    // Highlight link
     link.classList.add("zigzag-highlight");
     if (getComputedStyle(link).position === "static") {
       link.style.position = "relative";
@@ -86,6 +85,8 @@ export const locateLinkOnPage = (targetHref, retries = 5, delay = 300) => {
     const hasSiblings = link.parentNode.children.length > 1;
 
     if (hasSiblings) {
+      // Highlight link
+
       // Create popup as a sibling
       const popup = document.createElement("div");
       popup.className = "zigzag-popup";
@@ -106,7 +107,8 @@ export const locateLinkOnPage = (targetHref, retries = 5, delay = 300) => {
         popup.style.top = `${rect.top - popupRect.height - 4}px`;
       }
     } else {
-      // Wrap link with popup
+      // If the <a> tag has no siblings, apply the highlight zigzag style to the <a> tag’s parent element
+
       const popup = document.createElement("div");
       popup.className = "zigzag-popup-with-parent";
       popup.textContent = "Here’s the link";

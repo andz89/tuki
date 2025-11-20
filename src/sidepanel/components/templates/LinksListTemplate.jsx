@@ -67,7 +67,7 @@ export default function LinksListTemplate({
           {link.status ? (
             <div className="text-right text-sm">
               <div>Status: {link.status}</div>
-              {!link.ok && <div className="text-red-700">❌ Broken Url</div>}
+              {!link.ok && <div className="text-red-700"> Broken Url</div>}
             </div>
           ) : (
             ""
