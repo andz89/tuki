@@ -2,12 +2,12 @@ export async function startHovering(currentTabId) {
   try {
     chrome.tabs.sendMessage(
       currentTabId,
-      { type: "startHovering" },
+      { type: "startInspecting" },
       (response) => {
         if (chrome.runtime.lastError) {
-          console.warn("Failed to start hovering:", chrome.runtime.lastError);
+          console.warn("Failed to start Inspecting:", chrome.runtime.lastError);
         } else {
-          console.log("Hovering started:", response?.data);
+          console.log("Inspecting started:", response?.data);
         }
       }
     );
@@ -20,7 +20,7 @@ export const handleFindOnPage = async (uniqueClass) => {
   await chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (!tabs[0]?.id) return;
     chrome.tabs.sendMessage(tabs[0].id, {
-      type: "window-displayLink",
+      type: "locateLinkOnPage",
       targetHref: uniqueClass,
     });
   });

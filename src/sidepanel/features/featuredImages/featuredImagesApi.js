@@ -9,12 +9,16 @@ export async function fetchFeaturedImages() {
     if (!tab?.id) throw new Error("No active tab");
 
     return new Promise((resolve, reject) => {
-      chrome.tabs.sendMessage(tab.id, { type: "getMetaData" }, (response) => {
-        if (chrome.runtime.lastError) {
-          return reject(new Error(chrome.runtime.lastError.message));
+      chrome.tabs.sendMessage(
+        tab.id,
+        { type: "featuredImages" },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            return reject(new Error(chrome.runtime.lastError.message));
+          }
+          resolve(response?.data || []);
         }
-        resolve(response?.data || []);
-      });
+      );
     });
   } catch (error) {
     throw error;
