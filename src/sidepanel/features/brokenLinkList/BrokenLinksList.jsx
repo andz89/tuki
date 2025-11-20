@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useBrokenLinks } from "./useBrokenLinksList.js";
 import { useHelperFunctionStore } from "../../store/useHelperFunctionStore.jsx";
-import LinksListTemplate from "../../components/templates/LinksList_template.jsx";
+import LinksListTemplate from "../../components/templates/LinksListTemplate.jsx";
 import { AlertBoxElement } from "../../components/UI/Notification.jsx";
 
 export default function BrokenLinksPanel() {

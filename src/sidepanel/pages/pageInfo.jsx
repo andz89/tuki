@@ -8,8 +8,8 @@ import HyvorTalk from "../features/hyvortalk/HyvorTalk.jsx";
 export default function PageInfo() {
   return (
     <div className=" flex flex-col gap-2 mt-1 px-2">
-      <FeaturedImages />
       <PageMeta />
+      <FeaturedImages />
       <HyvorTalk />
       <ModuleCategory />
     </div>

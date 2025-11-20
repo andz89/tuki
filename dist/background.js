@@ -120,7 +120,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true; // keep messaging channel open
   }
 });
-// background/background.js
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "check_image_url") {
     fetch(msg.url, { method: "HEAD" })
@@ -141,5 +141,38 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       });
 
     return true; // keeps message channel alive
+  }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "check_links_head") {
+    const links = message.links;
+
+    Promise.all(
+      links.map(async (data) => {
+        if (data.href.startsWith("mailto:")) {
+          return { ...data, ok: true, status: 200 };
+        }
+
+        try {
+          const response = await fetch(data.href, { method: "HEAD" });
+          return {
+            ...data,
+            ok: response.ok,
+            status: response.status,
+          };
+        } catch (err) {
+          return {
+            ...data,
+            ok: false,
+            status: "NETWORK_ERROR",
+          };
+        }
+      })
+    ).then((results) => {
+      sendResponse({ results });
+    });
+
+    return true; // Keeps message channel open
   }
 });

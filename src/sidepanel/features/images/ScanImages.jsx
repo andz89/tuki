@@ -66,7 +66,7 @@ export default function ScanImages() {
                   <CopyNotificationElement />
                 )}
               </button>
-              <div>
+              <div className="text-right">
                 <div>Status: {res.status}</div>
                 {!res.ok && <div className="text-red-700">❌ Broken Image</div>}
                 {res.ok && <div className="text-green-700">✔ OK</div>}

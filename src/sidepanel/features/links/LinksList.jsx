@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { AlertBoxElement } from "../../components/UI/Notification.jsx";
-import LinksListTemplate from "../../components/templates/LinksList_template.jsx";
+import LinksListTemplate from "../../components/templates/LinksListTemplate.jsx";
 import { useLinksList } from "./useLinksList.js";
 import { handleFindOnPage } from "./linksListApi.js";
 export default function LinksPanel() {

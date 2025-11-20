@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useBrokenLinksStore } from "../../store/useBrokenLinksStore.jsx";
-import { fetchLinksFromTab, handleFindOnPage } from "./brokenLinksListApi.js";
+import {
+  fetchLinksFromTab,
+  handleFindOnPage,
+  checkLinksInBackground,
+} from "./brokenLinksListApi.js";
 import { copyToClipboard } from "../../utils/clipboardUtils.js";
 export function useBrokenLinks() {
   const {
@@ -36,29 +40,6 @@ export function useBrokenLinks() {
   const tabMismatch =
     requestTabId && currentTabId && requestTabId !== currentTabId;
 
-  const processBrokenLinks = async (links = links) => {
-    setLoading(true);
-    resetBrokenLinks(); // clear previous broken links
-
-    // check each link
-    const fetchPromises = links.map((data) => {
-      if (data.href.startsWith("mailto:")) return Promise.resolve();
-
-      return fetch(data.href, { method: "HEAD" })
-        .then((response) => {
-          if (!response.ok) {
-            addBrokenLink({ href: data.href, uniqueClass: data.uniqueClass });
-          }
-        })
-        .catch(() => {
-          addBrokenLink({ href: data.href, uniqueClass: data.uniqueClass });
-        });
-    });
-
-    await Promise.all(fetchPromises);
-
-    setLoading(false);
-  };
   const getLinks = async () => {
     updateCurrentTab();
 
@@ -66,14 +47,33 @@ export function useBrokenLinks() {
       active: true,
       currentWindow: true,
     });
+
     setRequestTabId(tab.id);
     setLoading(true);
     resetBrokenLinks();
+
     try {
-      const links = await fetchLinksFromTab(setTabId, setRequestTabId);
-      processBrokenLinks(links);
+      const linksFromTab = await fetchLinksFromTab(setTabId, setRequestTabId);
+      console.log("Broken links response:", linksFromTab);
+      const results = await checkLinksInBackground(linksFromTab);
+      console.log("Broken links found:", results);
+      processBrokenLinks(results.results);
     } finally {
+      setLoading(false);
     }
+  };
+  const processBrokenLinks = (results = []) => {
+    resetBrokenLinks();
+
+    results.forEach((item) => {
+      if (!item.ok) {
+        addBrokenLink({
+          href: item.href,
+          uniqueClass: item.uniqueClass,
+          status: item.status,
+        });
+      }
+    });
   };
 
   useEffect(() => {

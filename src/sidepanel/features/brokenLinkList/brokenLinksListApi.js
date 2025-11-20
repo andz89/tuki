@@ -51,3 +51,9 @@ export const handleFindOnPage = async (uniqueClass) => {
     });
   });
 };
+export const checkLinksInBackground = async (links) => {
+  return await chrome.runtime.sendMessage({
+    type: "check_links_head",
+    links,
+  });
+};

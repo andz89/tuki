@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { usePageLinksInspector } from "./useLInkInspectorList.js";
 
-import LinksListTemplate from "../../components/templates/LinksList_template.jsx";
+import LinksListTemplate from "../../components/templates/LinksListTemplate.jsx";
 import { AlertBoxElement } from "../../components/UI/Notification.jsx";
 
 export default function PageLinksInspectorList() {

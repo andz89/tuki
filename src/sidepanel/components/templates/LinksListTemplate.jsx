@@ -2,7 +2,7 @@ import React from "react";
 import {
   CopyNotificationElement,
   AlertBoxElement,
-} from "../../components/UI/Notification.jsx";
+} from "../UI/Notification.jsx";
 
 export default function LinksListTemplate({
   links,
@@ -18,10 +18,14 @@ export default function LinksListTemplate({
   }
 
   return (
-    <ol className="list-decimal ml-4 space-y-3">
+    <ol className="list-decimal ml-4 space-y-3 ">
       {links.map((link, i) => (
-        <li key={link.uniqueClass} id={`link-${i}`} className="mb-3">
-          <div className="flex justify-left items-center mb-2 gap-2">
+        <li
+          key={link.uniqueClass}
+          id={`link-${i}`}
+          className="mb-3 border p-2 rounded  border-slate-400"
+        >
+          <div className="flex items-center gap-2 mb-2">
             <button
               onClick={() => onFind(link.uniqueClass)}
               disabled={tabMismatch}
@@ -56,10 +60,18 @@ export default function LinksListTemplate({
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="leading-none text-base break-words text-slate-600 hover:text-yellow-600"
+            className="leading-none text-sm break-words text-slate-600 hover:text-yellow-600"
           >
             {link.href}
           </a>
+          {link.status ? (
+            <div className="text-right text-sm">
+              <div>Status: {link.status}</div>
+              {!link.ok && <div className="text-red-700">❌ Broken Url</div>}
+            </div>
+          ) : (
+            ""
+          )}
         </li>
       ))}
     </ol>
