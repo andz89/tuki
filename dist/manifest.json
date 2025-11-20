@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Tuki version",
+  "name": "Tuki version 1.0",
   "version": "1.0",
   "description": "A Chrome extension using Vite + React with a side panel",
   "background": {

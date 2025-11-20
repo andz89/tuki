@@ -120,3 +120,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true; // keep messaging channel open
   }
 });
+// background/background.js
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "check_image_url") {
+    fetch(msg.url, { method: "HEAD" })
+      .then((res) => {
+        sendResponse({
+          url: msg.url,
+          ok: res.ok,
+          status: res.status,
+          contentType: res.headers.get("content-type") || null,
+        });
+      })
+      .catch(() => {
+        sendResponse({
+          url: msg.url,
+          ok: false,
+          status: "NETWORK_ERROR",
+        });
+      });
+
+    return true; // keeps message channel alive
+  }
+});

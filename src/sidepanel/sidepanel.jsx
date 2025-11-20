@@ -14,6 +14,7 @@ import PageChangeWatcher from "./hooks/PageChangeWatcher.jsx";
 import GlobalTextHighlighter from "./hooks/GlobalTextHighlighter.jsx";
 import InputSearch from "./components/UI/InputSearch.jsx";
 import Html from "./pages/Html.jsx";
+import ScanImages from "./pages/ScanImages.jsx";
 
 function InnerApp() {
   const [isInjected, setIsInjected] = useState(false);
@@ -84,6 +85,7 @@ function InnerApp() {
           <Route path="/broken-links" element={<BrokenLinks />} />
           <Route path="/link-inspector" element={<LinkInspector />} />
           <Route path="/html" element={<Html />} />
+          <Route path="/images" element={<ScanImages />} />
         </Routes>
       </div>
     </div>

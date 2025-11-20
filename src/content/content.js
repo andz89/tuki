@@ -7,7 +7,8 @@ import {
   custom_style,
   custom_overlay,
 } from "./modules/inspectingLinks.js";
-
+// content/content.js
+import { extractImages } from "./modules/extractImages";
 //receive data listener::
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "ping") {
@@ -140,6 +141,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     removeCreatedCustomStyleAndElement();
     chrome.runtime.sendMessage({ type: "HOVERING_STOP" });
   }
-
+  if (message.type === "extract_images") {
+    const images = extractImages();
+    console.log("Extracted images in content script:", images);
+    sendResponse({ images });
+    return true;
+  }
   return true; // keep message channel open for async if needed
 });
