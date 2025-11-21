@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Mark from "mark.js";
 import { useLocation } from "react-router-dom";
 export default function useMarkText() {
-  const location = useLocation(); // 👈 detects your extension's current route (tab)
+  const location = useLocation();
   useEffect(() => {
     const input = document.querySelector("#highlight-input");
     const target = document.querySelector("#pages");
@@ -33,9 +33,8 @@ export default function useMarkText() {
     input.addEventListener("input", handleInput);
     input.addEventListener("click", handleInput);
 
-    handleInput(); // run once on load
+    handleInput();
 
-    // cleanup listener
     return () => {
       input.removeEventListener("input", handleInput);
       input.removeEventListener("click", handleInput);

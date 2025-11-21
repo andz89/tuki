@@ -1,8 +1,5 @@
-import React from "react";
-
 export default function Button({
   text = "Button",
-
   bgColor = "bg-blue-600",
   hoverBgColor = "hover:bg-blue-500",
   onClick = () => {},

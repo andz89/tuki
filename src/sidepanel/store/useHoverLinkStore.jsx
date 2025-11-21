@@ -1,4 +1,3 @@
-// useExtractLinkStore.jsx
 import { create } from "zustand";
 
 export const useHoverLinkStore = create((set) => ({

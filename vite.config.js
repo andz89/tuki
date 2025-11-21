@@ -11,10 +11,9 @@ export default defineConfig({
       targets: [
         { src: "src/manifest.json", dest: "dist" },
         { src: "src/background/background.js", dest: "dist" },
-        // { src: "src/content/content.js", dest: "dist" }, //
-        // { src: "src/content/module", dest: "dist" }, //
+        // { src: "src/content/content.js", dest: "dist" }, // for content script build, see vite.content.config
 
-        { src: "src/icons/*", dest: "dist/icons" }, //
+        { src: "src/icons/*", dest: "dist/icons" },
       ],
       hook: "writeBundle",
     }),

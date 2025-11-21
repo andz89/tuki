@@ -1,5 +1,3 @@
-// src/components/pages/PageInfo.jsx
-
 import FeaturedImages from "../features/featuredImages/featuredImages.jsx";
 
 import ModuleCategory from "../features/moduleCategory/ModuleCategory.jsx";

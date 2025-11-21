@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function FeaturedImagesTemplate({ images }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-2 border border-gray-200 dark:border-gray-700">

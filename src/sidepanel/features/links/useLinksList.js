@@ -1,4 +1,3 @@
-// src/hooks/useLinksList.js
 import { useEffect, useState } from "react";
 import { useExtractLinksStore } from "../../store/useExtractLinksStore.jsx";
 
@@ -40,7 +39,7 @@ export function useLinksList() {
 
       setAllLinks(links);
     } catch (err) {
-      console.error(err);
+      console.log(err);
     } finally {
       setLoading(false);
     }

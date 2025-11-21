@@ -1,10 +1,9 @@
-// src/components/Panel/ScanImages.jsx
 import React, { useState } from "react";
 import { useScanImagesStore } from "../../store/useScanImagesStore.jsx";
 import { useScanImages } from "./useScanImages.js";
 import { copyToClipboard } from "../../utils/clipboardUtils.js";
 import { CopyNotificationElement } from "../../components/UI/Notification.jsx";
-
+import Button from "../../components/UI/Button.jsx";
 export default function ScanImages() {
   const { results, brokenCount } = useScanImagesStore();
   const { loading, scanImages } = useScanImages();
@@ -25,22 +24,14 @@ export default function ScanImages() {
   );
 
   return (
-    <div className="p-4 text-sm">
-      <div className="flex gap-2 mb-4 flex-col mx-2">
-        <button
-          onClick={scanImages}
-          disabled={loading}
-          className={
-            loading
-              ? "bg-slate-600 text-center px-4 py-2 text-white rounded text-sm font-medium no-highlight"
-              : "hover:bg-blue-700 bg-blue-600 cursor-pointer text-center px-4 py-2 text-white rounded text-sm font-medium no-highlight"
-          }
-        >
-          {loading ? "Scanning..." : "Scan Images"}
-        </button>
-        <div className=" font-semibold text-red-600">
-          Broken images found: {brokenCount}
-        </div>
+    <div className="px-1 ">
+      <Button
+        text={loading ? "Scanning..." : "Scan Images"}
+        disabled={loading}
+        onClick={scanImages}
+      />
+      <div className=" font-semibold text-sm text-red-600 text-base">
+        Broken images found: {brokenCount}
       </div>
 
       <div className="mt-4">

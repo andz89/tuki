@@ -1,4 +1,3 @@
-// src/api/featuredImagesApi.js
 export async function fetchFeaturedImages() {
   try {
     const [tab] = await chrome.tabs.query({

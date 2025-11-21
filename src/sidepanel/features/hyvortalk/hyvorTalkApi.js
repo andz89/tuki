@@ -1,4 +1,3 @@
-// features/CustomTags/customTagsApi.js
 export async function getHyvorTalkApi() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   return new Promise((resolve, reject) => {

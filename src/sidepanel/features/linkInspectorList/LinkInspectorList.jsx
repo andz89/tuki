@@ -36,8 +36,8 @@ export default function PageLinksInspectorList() {
         <AlertBoxElement
           message={
             <>
-              <span className="font-medium">Warning alert!</span> ⚠️ Looks like
-              you switched tabs! The links below are from your previous tab.
+              <span className="font-medium">Warning alert!</span> Looks like you
+              switched tabs! The links below are from your previous tab.
             </>
           }
           type="warning"

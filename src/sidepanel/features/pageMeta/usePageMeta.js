@@ -1,4 +1,3 @@
-// usePageDetails.js
 import { useState, useEffect } from "react";
 import { getPageInfo } from "./pageMetaApi";
 

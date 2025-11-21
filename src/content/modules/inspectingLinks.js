@@ -53,7 +53,7 @@ export const getLinksOnSelectedSection = (e) => {
       );
       const uniqueClass = existing || `${uniquePrefix}-${counter++}`;
       if (!existing) a.classList.add(uniqueClass);
-      console.log(a.href);
+
       return {
         href: a.href,
         uniqueClass,

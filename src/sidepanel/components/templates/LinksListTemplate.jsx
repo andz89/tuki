@@ -67,10 +67,15 @@ export default function LinksListTemplate({
           {link.status ? (
             <div className="text-right text-sm">
               <div>Status: {link.status}</div>
-              {!link.ok && <div className="text-red-700"> Broken Url</div>}
+
+              <div className="">
+                {link.status === 403 ? "Forbidden" : link.statusText}
+              </div>
             </div>
           ) : (
-            ""
+            <div className="text-right text-sm">
+              <div>Status: Network Error</div>
+            </div>
           )}
         </li>
       ))}

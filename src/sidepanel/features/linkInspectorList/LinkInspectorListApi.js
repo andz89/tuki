@@ -5,14 +5,14 @@ export async function startHovering(currentTabId) {
       { type: "startInspecting" },
       (response) => {
         if (chrome.runtime.lastError) {
-          console.warn("Failed to start Inspecting:", chrome.runtime.lastError);
+          console.log("Failed to start:", chrome.runtime.lastError);
         } else {
           console.log("Inspecting started:", response?.data);
         }
       }
     );
   } catch (err) {
-    console.error("Error starting hover:", err);
+    console.log("Error starting hover:", err);
   }
 }
 

@@ -6,7 +6,6 @@ export async function fetchLinksFromTab(setTabId, setRequestTabId) {
     });
 
     if (!tab?.id) {
-      console.warn("No active tab found.");
       return [];
     }
 
@@ -21,7 +20,6 @@ export async function fetchLinksFromTab(setTabId, setRequestTabId) {
         { type: "extract-links" },
         (response) => {
           if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError.message);
             reject(new Error("Cannot access this page’s links."));
             return;
           }
@@ -36,7 +34,7 @@ export async function fetchLinksFromTab(setTabId, setRequestTabId) {
       );
     });
   } catch (err) {
-    console.error("Link fetch error:", err);
+    console.log("error:", err);
     return [];
   }
 }

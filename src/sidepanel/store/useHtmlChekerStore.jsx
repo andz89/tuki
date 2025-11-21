@@ -1,4 +1,3 @@
-// src/store/useHtmlScanner.js
 import { create } from "zustand";
 
 export const useHtmlChecker = create((set) => ({

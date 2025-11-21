@@ -1,4 +1,3 @@
-// features/ModuleCategory/useModuleCategory.js
 import { useState, useEffect } from "react";
 import { getCategoryElements } from "./moduleCategoryApi";
 
@@ -16,7 +15,7 @@ export default function useModuleCategory() {
         setElements(data);
       }
     } catch (err) {
-      console.error("Error fetching module categories:", err);
+      console.log("Error fetching module categories:", err);
       setError("Cannot access this page's elements.");
     }
   };

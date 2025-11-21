@@ -1,4 +1,3 @@
-// features/CustomTags/useCustomTags.js
 import { useState, useEffect } from "react";
 import { getHyvorTalkApi } from "./hyvorTalkApi";
 
@@ -15,7 +14,7 @@ export default function useHyvorTalk() {
         setHyvorTag(data[0]);
       }
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.log("Fetch error:", err);
       setError("Oops! Something went wrong. Please refresh the page.");
     }
   };

@@ -1,4 +1,3 @@
-// pageDetailsApi.js
 export async function getPageInfo() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   return new Promise((resolve, reject) => {

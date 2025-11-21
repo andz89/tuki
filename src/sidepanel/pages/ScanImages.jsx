@@ -1,5 +1,5 @@
 import React from "react";
-import ScanImagesList from "../features/images/ScanImages.jsx";
+import ScanImagesList from "../features/scanImages/ScanImages.jsx";
 const ScanImages = () => {
   return (
     <div>

@@ -1,4 +1,3 @@
-// src/sidepanel/main.jsx
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
@@ -30,12 +29,9 @@ function InnerApp() {
         },
         () => {
           if (chrome.runtime.lastError) {
-            console.warn(
-              "Injection warning:",
-              chrome.runtime.lastError.message
-            );
+            console.log("Injection error:", chrome.runtime.lastError.message);
           } else {
-            console.log("✅ content.js injected");
+            console.log(" content.js injected");
           }
 
           setIsInjected(true);

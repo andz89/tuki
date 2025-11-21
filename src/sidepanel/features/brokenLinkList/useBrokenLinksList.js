@@ -71,6 +71,7 @@ export function useBrokenLinks() {
           href: item.href,
           uniqueClass: item.uniqueClass,
           status: item.status,
+          statusText: item.statusText,
         });
       }
     });

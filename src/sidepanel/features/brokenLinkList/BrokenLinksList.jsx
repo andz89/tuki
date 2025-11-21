@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { useBrokenLinks } from "./useBrokenLinksList.js";
 import Button from "../../components/UI/Button.jsx";
 import LinksListTemplate from "../../components/templates/LinksListTemplate.jsx";
@@ -37,8 +36,8 @@ export default function BrokenLinksPanel() {
         <AlertBoxElement
           message={
             <>
-              <span className="font-medium">Warning alert!</span> ⚠️ Looks like
-              you switched tabs! The links below are from your previous tab.
+              <span className="font-medium">Warning alert!</span> Looks like you
+              switched tabs! The links below are from your previous tab.
             </>
           }
           type="warning"

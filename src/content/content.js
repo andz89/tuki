@@ -139,9 +139,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === "extract_images") {
     const images = extractImages();
-    console.log("Extracted images in content script:", images);
+
     sendResponse({ images });
     return true;
   }
-  return true; // keep message channel open for async if needed
+  return true;
 });

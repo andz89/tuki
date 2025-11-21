@@ -8,14 +8,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
     try {
       chrome.tabs.sendMessage(tabId, { type: "ping" }, async (response) => {
         if (chrome.runtime.lastError || !response) {
-          console.log("Injecting content.js into reloaded tab...");
+          // "Injecting content.js into reloaded tab."
           try {
             await chrome.scripting.executeScript({
               target: { tabId },
               files: ["content.js"],
             });
           } catch (e) {
-            console.warn("Cannot inject into tab:", e.message);
+            console.log("Cannot inject into tab:", e.message);
             return;
           }
         } else {
@@ -25,7 +25,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
         chrome.runtime.sendMessage({ action: "tabReload" });
       });
     } catch (e) {
-      console.warn("Tab update error:", e.message);
+      console.log("Tab update error:", e.message);
     }
   }
 });
@@ -41,8 +41,8 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
             files: ["content.js"],
           });
         } catch (e) {
-          console.warn("Cannot inject into tab:", e.message);
-          return; // Stop here if inject failed
+          console.log("Cannot inject into tab:", e.message);
+          return;
         }
       } else {
         console.log("content.js already active on this tab.");
@@ -51,7 +51,7 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
       chrome.runtime.sendMessage({ action: "tabChanged", tabId });
     });
   } catch (e) {
-    console.warn("Tab activation error:", e.message);
+    console.log("Tab activation error:", e.message);
   }
 });
 
@@ -99,7 +99,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
       });
 
-    return true; // keeps message channel alive
+    return true;
   }
   if (message.type === "check_links_head") {
     const links = message.links;
@@ -116,6 +116,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             ...data,
             ok: response.ok,
             status: response.status,
+            statusText: response.statusText,
           };
         } catch (err) {
           return {
@@ -129,6 +130,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ results });
     });
 
-    return true; // Keeps message channel open
+    return true;
   }
 });

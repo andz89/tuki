@@ -30,8 +30,8 @@ export default function LinksPanel() {
         <AlertBoxElement
           message={
             <>
-              <span className="font-medium">Warning:</span> ⚠️ You switched tabs
-              — results belong to previous tab.
+              <span className="font-medium">Warning:</span> You switched tabs —
+              results belong to previous tab.
             </>
           }
           type="warning"

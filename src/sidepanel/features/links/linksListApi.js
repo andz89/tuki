@@ -1,4 +1,3 @@
-// src/api/linksListApi.js
 export async function fetchLinksFromTab(setTabId, setRequestTabId) {
   try {
     const [tab] = await chrome.tabs.query({
@@ -7,13 +6,12 @@ export async function fetchLinksFromTab(setTabId, setRequestTabId) {
     });
 
     if (!tab?.id) {
-      console.warn("No active tab found.");
+      console.log("No active tab found.");
       return [];
     }
 
     const activeTabId = tab.id;
 
-    // Optional: store tabId if needed
     setTabId(activeTabId);
     setRequestTabId(activeTabId);
 
@@ -23,7 +21,7 @@ export async function fetchLinksFromTab(setTabId, setRequestTabId) {
         { type: "extract-links" },
         (response) => {
           if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError.message);
+            console.log(chrome.runtime.lastError.message);
             reject(new Error("Cannot access this page’s links."));
             return;
           }
@@ -38,7 +36,7 @@ export async function fetchLinksFromTab(setTabId, setRequestTabId) {
       );
     });
   } catch (err) {
-    console.error("Link fetch error:", err);
+    console.log("Link fetch error:", err);
     return [];
   }
 }

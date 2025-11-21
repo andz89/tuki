@@ -1,4 +1,3 @@
-// features/ModuleCategory/moduleCategoryApi.js
 export async function getCategoryElements() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   return new Promise((resolve, reject) => {

@@ -8,7 +8,7 @@ import { resolve } from "path";
 export default defineConfig({
   build: {
     outDir: "dist",
-    emptyOutDir: false, // keep files written by the other build
+    emptyOutDir: false,
     lib: {
       entry: resolve(__dirname, "src/content/content.js"),
       name: "ContentScript",

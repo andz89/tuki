@@ -1,21 +1,17 @@
 import { useHtmlChecker } from "../../store/useHtmlChekerStore";
 import { validateHtmlPage } from "./useHtmlChecker";
-
+import Button from "../../components/UI/Button";
 export default function HtmlScanner() {
   const { results, error, loading } = useHtmlChecker();
   return (
-    <div className="p-3 text-sm">
-      <div className="flex gap-2 mb-4 flex-col mx-2">
-        <button
-          onClick={validateHtmlPage}
-          disabled={loading}
-          className="text-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium no-highlight cursor-pointer"
-        >
-          {loading ? "Checking..." : "Validate Page HTML"}
-        </button>
-      </div>
+    <div className="px-1 text-sm">
+      <Button
+        text={loading ? "Checking..." : "Validate Page HTML"}
+        disabled={loading}
+        onClick={validateHtmlPage}
+      />
 
-      {error && <p className="text-red-600 mt-3">⚠️ {error}</p>}
+      {error && !loading && <p className="text-red-600 mt-3"> {error}</p>}
 
       {results.length > 0 && (
         <ul className="mt-3 space-y-4">

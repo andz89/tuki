@@ -1,4 +1,3 @@
-// src/hooks/useFeaturedImages.js
 import { useState, useEffect } from "react";
 import { fetchFeaturedImages } from "./featuredImagesApi.js";
 
@@ -12,7 +11,6 @@ export function useFeaturedImages() {
       setImages(result);
       setError("");
     } catch (err) {
-      console.error(err);
       setError("Error fetching meta data.");
     }
   }

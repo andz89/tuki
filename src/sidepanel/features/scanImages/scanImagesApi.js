@@ -1,5 +1,3 @@
-// src/api/scanImagesApi.js
-
 export const extractImages = async (tabId) => {
   const response = await chrome.tabs.sendMessage(tabId, {
     type: "extract_images",

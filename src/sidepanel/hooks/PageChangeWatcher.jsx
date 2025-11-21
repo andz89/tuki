@@ -5,8 +5,6 @@ export default function PageChangeWatcher({ onPageChange }) {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("🧭 User navigated to:", location.pathname);
-
     // Run  custom action when route changes
     if (typeof onPageChange === "function") {
       stopHoveringLink();
@@ -28,7 +26,6 @@ export default function PageChangeWatcher({ onPageChange }) {
 
     chrome.runtime.onMessage.addListener(handleTabChanged);
 
-    // Cleanup
     return () => {
       chrome.runtime.onMessage.removeListener(handleTabChanged);
     };
@@ -45,7 +42,6 @@ const stopHoveringLink = async () => {
     });
     if (tab?.id) {
       await chrome.tabs.sendMessage(tab.id, { type: "stopHoveringLink" });
-      console.log("🛑 Hovering stopped on tab", tab.id);
     }
   } catch (error) {
     console.warn("Error stopping hover:", error);

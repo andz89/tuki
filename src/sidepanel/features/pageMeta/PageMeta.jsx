@@ -1,4 +1,3 @@
-// PageDetails.jsx
 import { AlertBoxElement } from "../../components/UI/Notification.jsx";
 import PageMetaTemplate from "../../components/templates/PageMeta_template.jsx";
 import usePageDetails from "./usePageMeta.js";

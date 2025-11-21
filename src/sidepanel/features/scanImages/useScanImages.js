@@ -1,4 +1,3 @@
-// src/hooks/useScanImages.js
 import { useState } from "react";
 import { useScanImagesStore } from "../../store/useScanImagesStore.jsx";
 import { scanAllImages } from "./scanImagesApi.js";
@@ -18,7 +17,7 @@ export const useScanImages = () => {
       const results = await scanAllImages(tab.id);
       setResults(results);
     } catch (err) {
-      console.error("Error scanning images:", err);
+      console.log("Error scanning images:", err);
     }
     setLoading(false);
   };
