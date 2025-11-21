@@ -6,9 +6,6 @@ import { copyToClipboard } from "../../utils/clipboardUtils.js";
 import { CopyNotificationElement } from "../../components/UI/Notification.jsx";
 
 export default function ScanImages() {
-  // const results = useScanImagesStore((s) => s.results);
-  // const brokenCount = useScanImagesStore((s) => s.brokenCount);
-
   const { results, brokenCount } = useScanImagesStore();
   const { loading, scanImages } = useScanImages();
 
@@ -29,15 +26,19 @@ export default function ScanImages() {
 
   return (
     <div className="p-4 text-sm">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex gap-2 mb-4 flex-col mx-2">
         <button
           onClick={scanImages}
           disabled={loading}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className={
+            loading
+              ? "bg-slate-600 text-center px-4 py-2 text-white rounded text-sm font-medium no-highlight"
+              : "hover:bg-blue-700 bg-blue-600 cursor-pointer text-center px-4 py-2 text-white rounded text-sm font-medium no-highlight"
+          }
         >
           {loading ? "Scanning..." : "Scan Images"}
         </button>
-        <div className="mb-3 font-semibold text-red-600">
+        <div className=" font-semibold text-red-600">
           Broken images found: {brokenCount}
         </div>
       </div>

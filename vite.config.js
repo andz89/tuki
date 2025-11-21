@@ -11,10 +11,10 @@ export default defineConfig({
       targets: [
         { src: "src/manifest.json", dest: "dist" },
         { src: "src/background/background.js", dest: "dist" },
-        // { src: "src/content/content.js", dest: "dist" }, // 👈 add this
-        // { src: "src/content/module", dest: "dist" }, // 👈 add this
+        // { src: "src/content/content.js", dest: "dist" }, //
+        // { src: "src/content/module", dest: "dist" }, //
 
-        { src: "src/icons/*", dest: "dist/icons" }, // ✅ add this line
+        { src: "src/icons/*", dest: "dist/icons" }, //
       ],
       hook: "writeBundle",
     }),

@@ -13,36 +13,32 @@ import { extractImages } from "./modules/extractImages";
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "ping") {
     sendResponse({ pong: true });
-    return true; // keeps sendResponse valid asynchronously
+    return true; // to check if content script is available
   }
   if (message.type === "featuredImages") {
     const metaTags = document.querySelectorAll("meta");
 
-    const excludeKeywords = [
-      "parallax",
-      "background",
-      "banner",
-      "header",
-      "user",
-    ];
+    let ogImage = null;
+    let twitterImage = null;
 
-    const metaImages = Array.from(metaTags)
-      .map((meta) => {
-        const content = meta.getAttribute("content");
-        const prop =
-          meta.getAttribute("property") || meta.getAttribute("name") || "";
+    metaTags.forEach((meta) => {
+      const content = meta.getAttribute("content");
+      const prop =
+        meta.getAttribute("property") || meta.getAttribute("name") || "";
 
-        if (
-          content &&
-          (prop === "og:image" || prop === "twitter:image") &&
-          !excludeKeywords.some((word) => content.toLowerCase().includes(word))
-        ) {
-          return { property: prop, url: content };
-        }
+      if (!content) return;
 
-        return null;
-      })
-      .filter((item) => item !== null);
+      if (!ogImage && prop === "og:image") {
+        ogImage = { property: "og:image", url: content };
+      }
+
+      if (!twitterImage && prop === "twitter:image") {
+        twitterImage = { property: "twitter:image", url: content };
+      }
+    });
+
+    //  only gets the first image found in og:image and twitter image.
+    const metaImages = [ogImage, twitterImage].filter(Boolean);
 
     sendResponse({ data: metaImages });
   }
@@ -64,7 +60,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ description, lang, canonical, title });
   }
 
-  if (message.type === "getCustomTag") {
+  if (message.type === "getHyvorTalk") {
     const customElement = document.querySelector("hyvor-talk-comments");
 
     if (!customElement) {
@@ -100,7 +96,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         name: attr.name,
         value: attr.value,
       })),
-      innerText: el.innerText.trim().slice(0, 100), // optional preview (limit text length)
+      innerText: el.innerText.trim().slice(0, 100), // limit text length
     }));
 
     sendResponse({ data: serialized });
@@ -125,7 +121,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       custom_overlay();
     }
 
-    // ✅ Define getLinksOnSelectedSection as a global/window-scoped function
+    //  Define getLinksOnSelectedSection
 
     document.addEventListener("mouseover", mouseOver);
     document.addEventListener("mouseout", mouseOut);

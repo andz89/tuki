@@ -1,4 +1,3 @@
-// src/api/linksListApi.js
 export async function fetchLinksFromTab(setTabId, setRequestTabId) {
   try {
     const [tab] = await chrome.tabs.query({
@@ -13,7 +12,6 @@ export async function fetchLinksFromTab(setTabId, setRequestTabId) {
 
     const activeTabId = tab.id;
 
-    // Optional: store tabId if needed
     setTabId(activeTabId);
     setRequestTabId(activeTabId);
 

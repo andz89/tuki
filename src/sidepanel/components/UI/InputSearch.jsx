@@ -1,7 +1,7 @@
 import useMarkText from "../../hooks/GlobalTextHighlighter.jsx";
 
 export default function InputSearch() {
-  useMarkText(); // automatically applies highlighting
+  useMarkText();
 
   return (
     <div className="p-1 sticky top-20 z-50 bg-white">

@@ -15,7 +15,6 @@ export const AlertBoxElement = ({ message, type = "info", duration }) => {
     if (message) {
       setVisible(true);
 
-      // Only auto-hide if duration is provided
       if (duration) {
         const timer = setTimeout(() => setVisible(false), duration);
         return () => clearTimeout(timer);

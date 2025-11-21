@@ -13,13 +13,13 @@ export const getLinksOnSelectedSection = (e) => {
 
   const aElements = new Set();
 
-  // ✅ Check if the clicked element OR any of its ancestors is an <a>
+  // Check if the clicked element or any of its ancestors is an <a>
   const maybeSelfA = selectedElement.closest("a");
   if (maybeSelfA) {
     aElements.add(maybeSelfA);
   }
 
-  // ✅ Then add all child <a> elements inside the selected element
+  // Then add all child <a> elements inside the selected element
   selectedElement.querySelectorAll("a").forEach((a) => aElements.add(a));
 
   const links = Array.from(aElements)
@@ -106,13 +106,13 @@ export const mouseOut = (e) => {
 };
 
 export const removeCreatedCustomStyleAndElement = () => {
-  // Remove highlights, overlays, listeners, etc.
+  // Remove highlights, overlays, listeners,
   document.querySelectorAll(".__hover-highlight").forEach((el) => {
     el.classList.remove("__hover-highlight");
   });
   var style = document.getElementById("custom-style");
   if (style) style.remove();
-  // Example: remove overlay
+
   var overlay = document.getElementById("custom-overlay");
   if (overlay) overlay.remove();
 

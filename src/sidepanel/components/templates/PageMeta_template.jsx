@@ -1,4 +1,3 @@
-// src/components/templates/PageMetaTemplate.jsx
 import React from "react";
 
 export default function PageMetaTemplate({ data }) {

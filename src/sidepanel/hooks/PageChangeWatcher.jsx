@@ -7,15 +7,13 @@ export default function PageChangeWatcher({ onPageChange }) {
   useEffect(() => {
     console.log("🧭 User navigated to:", location.pathname);
 
-    // Run your custom action when route changes
+    // Run  custom action when route changes
     if (typeof onPageChange === "function") {
-      // onPageChange(location.pathname);
       stopHoveringLink();
     }
   }, [location.pathname, onPageChange]);
 
   useEffect(() => {
-    // 🔹 Handle tab change from background.js
     const handleTabChanged = (message) => {
       if (message.action === "tabChanged") {
         console.log("🔄 Tab switched — stopping hover...");
@@ -24,11 +22,10 @@ export default function PageChangeWatcher({ onPageChange }) {
 
       if (message.action === "tabReload") {
         console.log("🔁 Tab reloaded — reloading app...");
-        window.location.reload(); // 🔹 reload your extension React UI
+        window.location.reload();
       }
     };
 
-    // Listen for messages sent from background.js
     chrome.runtime.onMessage.addListener(handleTabChanged);
 
     // Cleanup
@@ -37,10 +34,9 @@ export default function PageChangeWatcher({ onPageChange }) {
     };
   }, []);
 
-  return null; // This component doesn’t render anything
+  return null;
 }
 
-// 🔹 Stop hover action (helper)
 const stopHoveringLink = async () => {
   try {
     const [tab] = await chrome.tabs.query({

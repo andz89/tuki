@@ -3,7 +3,7 @@ import { usePageLinksInspector } from "./useLInkInspectorList.js";
 
 import LinksListTemplate from "../../components/templates/LinksListTemplate.jsx";
 import { AlertBoxElement } from "../../components/UI/Notification.jsx";
-
+import Button from "../../components/UI/Button.jsx";
 export default function PageLinksInspectorList() {
   const {
     links,
@@ -20,24 +20,17 @@ export default function PageLinksInspectorList() {
   } = usePageLinksInspector();
 
   return (
-    <div className="p-3">
-      <div className="flex gap-2 mb-4 flex-col mx-2">
-        {!isFetching ? (
-          <button
-            onClick={handleStartHovering}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium no-highlight cursor-pointer"
-          >
-            Start Hover Mode
-          </button>
-        ) : (
-          <button
-            onClick={stopHovering}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium no-highlight cursor-pointer"
-          >
-            Stop Hover Mode
-          </button>
-        )}
-      </div>
+    <div className="px-1">
+      {!isFetching ? (
+        <Button text={"Start Hover Mode"} onClick={handleStartHovering} />
+      ) : (
+        <Button
+          bgColor={"bg-red-700"}
+          hoverBgColor={"hover:bg-red-600"}
+          text={" Stop Hover Mode"}
+          onClick={stopHovering}
+        />
+      )}
 
       {tabMismatch && (
         <AlertBoxElement

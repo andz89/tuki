@@ -18,13 +18,7 @@ import ScanImages from "./pages/ScanImages.jsx";
 
 function InnerApp() {
   const [isInjected, setIsInjected] = useState(false);
-  const handlePageChange = (path) => {
-    console.log("⚠️ User switched to another page:", path);
-    // Stop fetching, reset state, or show warning here
-    // Example:
-    // stopHoveringLink();
-    // setIsFetching(false);
-  };
+
   async function loadFunctions() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tabId = tabs[0].id;
@@ -43,14 +37,13 @@ function InnerApp() {
           } else {
             console.log("✅ content.js injected");
           }
-          // Either way, mark it as injected to proceed
+
           setIsInjected(true);
         }
       );
     });
   }
   useEffect(() => {
-    // initial injection
     loadFunctions();
   }, []);
 
@@ -75,7 +68,7 @@ function InnerApp() {
         <InputSearch />
       </div>
 
-      <PageChangeWatcher onPageChange={handlePageChange} />
+      <PageChangeWatcher onPageChange={(path) => {}} />
       <GlobalTextHighlighter />
 
       <div id="pages">

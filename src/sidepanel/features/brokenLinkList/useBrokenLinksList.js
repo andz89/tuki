@@ -54,9 +54,9 @@ export function useBrokenLinks() {
 
     try {
       const linksFromTab = await fetchLinksFromTab(setTabId, setRequestTabId);
-      console.log("Broken links response:", linksFromTab);
+
       const results = await checkLinksInBackground(linksFromTab);
-      console.log("Broken links found:", results);
+
       processBrokenLinks(results.results);
     } finally {
       setLoading(false);

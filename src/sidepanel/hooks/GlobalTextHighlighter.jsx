@@ -11,7 +11,7 @@ export default function useMarkText() {
     const markInstance = new Mark(target);
 
     const markOptions = {
-      exclude: [".no-highlight"], // <-- must be passed to mark(), not to constructor
+      exclude: [".no-highlight"],
       separateWordSearch: false,
     };
     let timer;
@@ -42,5 +42,5 @@ export default function useMarkText() {
     };
   }, [location.pathname]);
 
-  return null; // nothing visible, just runs globally
+  return null;
 }
