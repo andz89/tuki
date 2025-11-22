@@ -1,4 +1,5 @@
 export default function Button({
+  //params
   text = "Button",
   bgColor = "bg-blue-600",
   hoverBgColor = "hover:bg-blue-500",

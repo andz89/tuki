@@ -63,10 +63,9 @@ function InnerApp() {
 
         <InputSearch />
       </div>
-
+      {/* global */}
       <PageChangeWatcher onPageChange={(path) => {}} />
       <GlobalTextHighlighter />
-
       <div id="pages">
         <Routes>
           <Route path="/" element={<PageInfo />} />
