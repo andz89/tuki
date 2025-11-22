@@ -33,7 +33,7 @@ export default function useMarkText() {
     input.addEventListener("input", handleInput);
     input.addEventListener("click", handleInput);
 
-    handleInput();
+    handleInput(); //load once
 
     return () => {
       input.removeEventListener("input", handleInput);
