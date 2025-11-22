@@ -73,9 +73,7 @@ export default function LinksListTemplate({
               </div>
             </div>
           ) : (
-            <div className="text-right text-sm">
-              <div>Status: Network Error</div>
-            </div>
+            <div className=" "></div>
           )}
         </li>
       ))}
